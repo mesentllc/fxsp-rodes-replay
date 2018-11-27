@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+		                   http://www.springframework.org/schema/jee
+		                   http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+	<!-- Connection Factory -->
+	<bean id="ocConnectionFactory" class="com.fedex.smartpost.common.jms.RetryingConnectionFactoryDecorator">
+		<constructor-arg ref="ocCachingConnectionFactory" />
+		<property name="connectionRetryTimeout" value="5000" />
+		<property name="maxConnectionAttempts" value="5" />
+	</bean>
+
+	<bean id="ocCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="ocPublisherForeignCF" />
+		<property name="sessionCacheSize" value="70" />
+	</bean>
+
+	<bean id="ocPublisherForeignCF" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="ocJndiLdapLookupConnectionFactory" />
+		<property name="username" value="6762" />
+		<property name="password" value="6762" />
+	</bean>
+
+	<jee:jndi-lookup id="ocJndiLdapLookupConnectionFactory" jndi-name="fxClientUID=VS.FXSPSHIP.ORDERCREATE.QCF">
+		<jee:environment>
+<!--
+			java.naming.provider.url=ldap://apptstldap.corp.fedex.com/ou=messaging,dc=corp,dc=fedex,dc=com
+-->
+			java.naming.provider.url=ldap://appldap.prod.fedex.com:389/ou=messaging,dc=prod,dc=fedex,dc=com
+			java.naming.factory.initial=com.fedex.mi.decorator.jms.FedexTibcoInitialContext
+		</jee:environment>
+	</jee:jndi-lookup>
+
+	<bean id="ocPublisher" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="ocConnectionFactory" />
+		<property name="defaultDestinationName" value="FXSPSHIP.ORDERCREATE.RATING_6762" />
+		<property name="messageConverter" ><null /></property>
+		<property name="pubSubDomain" value="false" />
+		<property name="sessionTransacted" value="true" />
+		<property name="destinationResolver" ref="jndiDestinationResolver" />
+	</bean>
+</beans>

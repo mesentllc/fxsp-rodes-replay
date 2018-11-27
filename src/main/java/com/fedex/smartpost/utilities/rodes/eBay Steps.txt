@@ -1,0 +1,8 @@
+Sort.Scan.Check.Date.Active
+
+1. Run historical/ExtractRepayData class
+2. Run ExtractMessagesFromRecMaster class with scan dates you wish to replay
+3. Run PublishFile for OC
+4. Run PublishFile for SS
+5. Run VerifyRun to process records
+

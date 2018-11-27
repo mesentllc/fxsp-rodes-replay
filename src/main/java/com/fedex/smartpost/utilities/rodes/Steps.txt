@@ -1,0 +1,44 @@
+Sort.Scan.Check.Date.Active
+
+Steps to replay SS, while using OC/PSTL physicals
+1. Extract a list of package ids that you wish to replay and place them in a file.
+2. Change the infile and to the filename created in step 1, then run BuildMessagesForReplay.
+3. Open the PublishFile source and set the file name "/Support/toBeReplayed.rec" in the args[0] variable.  Also, you could specify the number
+   of threads you wish to spawn to perform the publishing in the args[1] variable.
+4. Now we need to kick off the fxsp-rodes-pkg-aggregator to build the billing packages, so run the VerifyRun source, which will perform the
+   tickle messages to the aggregator, and then verifies that the package ids are in BILLING_PACKAGE.
+
+----------------------------------
+
+Steps that should be run to perform the replay process for RODeS:
+1. Extract a list of package ids that you wish to replay and place them in a file.
+2. Open the CheckProposedFile source and put the name of the file in the main method - several examples are commented out for your referral.
+3. Set the "saveIt" flag in the checkProposedFile.process method of the main method in CheckProposedFile to false
+    a. This will run through the file, and inform you what the impact of the file would be without doing any processing
+    b. Verify that the number of UNRELEASED package ids from EDW is close to the total records found in the source file - since this is where
+       the replays will come from - this will be the number of package ids that will be replayed.
+    c. Verify that the number of package ids found in BILLING_PACKAGE is what you expected - these package ids WILL NOT be replayed - so make sure
+       this is satisfactory.
+4. Change the "saveIt" flag to true, so that the intermediary file is created when you are ready to start the replay.  This will create a file that
+   contains all the messages that will be published into a file.  This will allow you to publish a subset of messages, which will become clear as
+   we go down this list (basically, you will be able to select which messages to be replayed based on a set of scan dates, so not to exceed the
+   maximum number of available scan dates presented to the releaser.
+5. Next run the ComputeImpactOfMessageFile, so that it identifies the scan dates that the file contains.
+    a. Verify that the number does not cause the total number of available scan dates exceed the maximum number of scan dates to be released.
+    b. It will identify all the scan dates, so you can copy-n-paste the selected scan dates into the next step.
+6. Open the BuildMessageFileFromMaster source, and either:
+    a. Create an string (arg[0]) that contains the subset of scan dates that you wish to replay, from step 5 or
+    b. Set the arg[0] string value to null, which will replay all the messages held within the file created in step 4.
+7. Run BuildMessageFileFromMaster.
+    a. If you provide a subset of scan dates, the file will be modified to keep all the records that don't fit the criteria, so that the file
+       could be used afterwards to replay the rest of the scan date at another time.
+    b. In the output, you will see a file that was built.  Cut-n-paste this file name, to be used in the final step - publishing the messages.
+8. Open the PublishFile source and paste the file name that was provided in step 7 in the args[0] variable.  Also, you could specify the number
+   of threads you wish to spawn to perform the publishing in the args[1] variable.
+9. Now we need to kick off the fxsp-rodes-pkg-aggregator to build the billing packages, so run the VerifyRun source, which will perform the
+   tickle messages to the aggregator, and then verifies that the package ids are in BILLING_PACKAGE.
+10. One situation I experienced was that the events were invalidated, due to the date outside of range '[Not In Range]' reason, in this case:
+    a. Set the system parameter 'Sort.Scan.Check.Date.Active' to false, wait 15+ minutes (to refresh the cache)
+    b. Run http://pje03534.ground.fedex.com:14150/rodes-pkg-aggregator/service/resetDomesticEvents?state=NEW&reason=ReplayReset&eventSeq=
+       i. select count(*) from SPRODS_SCHEMA.PACKAGE_DOMESTIC_EVENT_STAT where created_dt > sysdate - 1 and PKG_EVENT_REASON_DESC = '[Not In Range]';
+    c. Run step 9.

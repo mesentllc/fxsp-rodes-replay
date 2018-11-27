@@ -1,0 +1,41 @@
+package com.fedex.smartpost.utilities.rodes.deprecated;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class BuildMessageFileFromUPNs {
+	private static final Logger logger = LogManager.getLogger(BuildMessageFileFromUPNs.class);
+	private EDWDao edwDao;
+
+	public BuildMessageFileFromUPNs() {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		edwDao = (EDWDao)context.getBean("edwDao");
+	}
+
+	private void processUPNsUsingPackageFact(String filename) throws IOException, ParseException {
+//		List<Long> pkgList = MiscUtil.retreiveUPNsFromFile(filename, buildScanDates(scanDates));
+//		List<Long> pkgList = MiscUtil.retreiveUPNsFromFile(filename, new TreeSet<>());
+		List<Long> pkgList = MiscUtil.retreiveUPNsFromFile(filename);
+		logger.info("Package Count: " + pkgList.size());
+		logger.info("Message File Built: " + edwDao.buildFileUsingUPNsAndPackageFact(pkgList, true));
+	}
+
+	public static void main(String[] args) throws IOException, ParseException {
+		if (args.length != 1) {
+			args = new String[1];
+			// This file was created from the CreateUPNList method
+			// args[0] = "/unreleased.txt";
+			args[0] = "/Support/2017.01.25/2017.01.25-upn.txt";
+		}
+		BuildMessageFileFromUPNs buildMessageFileFromUPNs = new BuildMessageFileFromUPNs();
+		buildMessageFileFromUPNs.processUPNsUsingPackageFact(args[0]);
+	}
+}

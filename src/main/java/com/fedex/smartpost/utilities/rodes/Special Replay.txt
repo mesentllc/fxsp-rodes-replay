@@ -1,0 +1,7 @@
+Sort.Scan.Check.Date.Active
+
+1. Run BuildMessagesForReplay
+2. Run ComputeImpactOfMessageFile
+3. Run ExtractMessagesFromRecMaster
+4. Run PublishFile
+5. Run UpdateMasterRecFile

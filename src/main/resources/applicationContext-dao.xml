@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="billingPackageDao" class="com.fedex.smartpost.utilities.rodes.dao.BillingPackageDaoImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="billingGroupDao" class="com.fedex.smartpost.utilities.rodes.dao.BillingGroupDaoImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="billingPackageEpdiEventGateway" class="com.fedex.smartpost.utilities.rodes.dao.BillingPackageEpdiEventGatewayImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+    <bean id="billingPackageHistoryGateway" class="com.fedex.smartpost.utilities.rodes.dao.BillingPackageHistoryGatewayImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="returnsEventStatGateway" class="com.fedex.smartpost.utilities.rodes.dao.ReturnsEventStatGatewayImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="domesticEventStatGateway" class="com.fedex.smartpost.utilities.rodes.dao.DomesticEventStatGatewayImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="packageDetailXfer" class="com.fedex.smartpost.utilities.rodes.dao.PackageDetailXferImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="outboundOrdCrtEvntStatDao" class="com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDaoImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="billingGroupSummaryDao" class="com.fedex.smartpost.utilities.rodes.dao.BillingGroupSummaryDaoImpl">
+		<constructor-arg ref="oracleDataSource" />
+	</bean>
+
+	<bean id="edwDao" class="com.fedex.smartpost.utilities.edw.dao.EDWDaoImpl">
+		<constructor-arg ref="edwDataSource" />
+	</bean>
+</beans>
