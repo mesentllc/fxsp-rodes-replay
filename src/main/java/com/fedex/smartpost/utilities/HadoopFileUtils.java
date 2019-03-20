@@ -1,5 +1,8 @@
 package com.fedex.smartpost.utilities;
 
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,9 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 public class HadoopFileUtils {
 	private String[] columnNames;

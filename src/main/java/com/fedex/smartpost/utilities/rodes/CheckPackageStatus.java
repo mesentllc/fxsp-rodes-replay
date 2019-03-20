@@ -1,18 +1,18 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-
 public class CheckPackageStatus {
-	private static final Logger logger = Logger.getLogger(CheckPackageStatus.class);
+	private static final Log logger = LogFactory.getLog(CheckPackageStatus.class);
 	private BillingPackageDao billingPackageDao;
 
 	public CheckPackageStatus() {

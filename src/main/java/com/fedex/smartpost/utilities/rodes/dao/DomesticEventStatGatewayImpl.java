@@ -1,25 +1,23 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
 import com.fedex.smartpost.utilities.rodes.model.EventRecord;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DomesticEventStatGatewayImpl extends NamedParameterJdbcTemplate implements DomesticEventStatGateway {
-	private static final Logger logger = LogManager.getLogger(DomesticEventStatGateway.class);
+	private static final Log logger = LogFactory.getLog(DomesticEventStatGateway.class);
 	private static final String RETRIEVE_DOMESTIC_EVENTS_FOR_PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrieveDomesticEventsForPackageId.sql");
 	private DataSource dataSource;
 

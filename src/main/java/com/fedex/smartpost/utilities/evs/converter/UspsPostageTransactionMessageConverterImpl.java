@@ -1,12 +1,12 @@
 package com.fedex.smartpost.utilities.evs.converter;
 
-import java.io.StringWriter;
+import com.fedex.smartpost.postal.types.UspsPostage;
+import com.fedex.smartpost.utilities.evs.errors.EvccRuntimeException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
-import com.fedex.smartpost.postal.types.UspsPostage;
-import com.fedex.smartpost.utilities.evs.errors.EvccRuntimeException;
+import java.io.StringWriter;
 
 public class UspsPostageTransactionMessageConverterImpl implements UspsPostageTransactionMessageConverter {
     private static final JAXBContext jaxbContext = initContext();

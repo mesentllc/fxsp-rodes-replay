@@ -1,19 +1,19 @@
 package com.fedex.smartpost.utilities.evs.thread;
 
+import com.fedex.smartpost.utilities.jms.creator.JmsMessageCreator;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
+import org.springframework.jms.core.JmsTemplate;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.fedex.smartpost.utilities.jms.creator.JmsMessageCreator;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.springframework.jms.core.JmsTemplate;
-
 public class PublishThread extends Thread {
-	private static final Logger logger = LogManager.getLogger(PublishThread.class);
+	private static final Log logger = LogFactory.getLog(PublishThread.class);
 	private int threadNumber;
 	private final BlockingQueue<List<Message>> messageStringQueue;
 	private JmsTemplate publisher;

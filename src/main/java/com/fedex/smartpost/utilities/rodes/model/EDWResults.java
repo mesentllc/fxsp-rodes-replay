@@ -1,5 +1,7 @@
 package com.fedex.smartpost.utilities.rodes.model;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import com.fedex.smartpost.utilities.MiscUtil;
 
 public class EDWResults {
 	private Map<Date, List<Message>> messages = new TreeMap<>();

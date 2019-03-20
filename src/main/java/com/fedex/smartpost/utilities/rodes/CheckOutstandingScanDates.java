@@ -1,20 +1,19 @@
 package com.fedex.smartpost.utilities.rodes;
 
 
+import com.fedex.smartpost.utilities.rodes.dao.BillingGroupSummaryDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.rodes.dao.BillingGroupSummaryDao;
-
 public class CheckOutstandingScanDates {
-	private static final Logger logger = LogManager.getLogger(CheckOutstandingScanDates.class);
+	private static final Log logger = LogFactory.getLog(CheckOutstandingScanDates.class);
 	private BillingGroupSummaryDao billingGroupSummaryDao;
 
 	public CheckOutstandingScanDates() {

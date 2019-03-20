@@ -1,5 +1,23 @@
 package com.fedex.smartpost.utilities;
 
+import com.fedex.smartpost.common.business.FxspPackage;
+import com.fedex.smartpost.common.business.FxspPackageException;
+import com.fedex.smartpost.common.business.FxspPackageFactory;
+import com.fedex.smartpost.common.types.CustomerInformation;
+import com.fedex.smartpost.common.types.Shipment;
+import com.fedex.smartpost.common.types.Shipping;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,28 +38,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
-import com.fedex.smartpost.common.types.CustomerInformation;
-import com.fedex.smartpost.common.types.Shipment;
-import com.fedex.smartpost.common.types.Shipping;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class MiscUtil {
-	private static final Logger logger = LogManager.getLogger(MiscUtil.class);
+	private static final Log logger = LogFactory.getLog(MiscUtil.class);
 	public static final String SS_MASTER_FILE = "/Support/masterReplayRequests.txt";
 	public static final String SS_MASTER_REC_FILE = "/Support/masterReplayRequests.rec";
 	public static final String OC_MASTER_FILE = "/Support/EdwMasterReplayRequests-oc.txt";

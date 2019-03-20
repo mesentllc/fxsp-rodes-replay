@@ -1,5 +1,11 @@
 package com.fedex.smartpost.utilities.rodes.deprecated;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.ParseException;
@@ -9,14 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 public class TrimMessageFileForScanDates {
-	private static final Logger logger = LogManager.getLogger(TrimMessageFileForScanDates.class);
+	private static final Log logger = LogFactory.getLog(TrimMessageFileForScanDates.class);
 	private static final SimpleDateFormat scanDateSDF = new SimpleDateFormat("yyyy-MM-dd");
 
 	private Date parseMessage(String message) throws ParseException {

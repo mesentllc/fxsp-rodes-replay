@@ -1,23 +1,22 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class BuildMessagesForReplay {
-	private static final Logger logger = LogManager.getLogger(BuildMessagesForReplay.class);
+	private static final Log logger = LogFactory.getLog(BuildMessagesForReplay.class);
 	private EDWDao edwDao;
 
 	public BuildMessagesForReplay() {

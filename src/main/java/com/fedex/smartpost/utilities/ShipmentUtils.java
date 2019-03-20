@@ -1,26 +1,28 @@
 package com.fedex.smartpost.utilities;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamResult;
-
 import com.fedex.smartpost.common.types.MailClass;
 import com.fedex.smartpost.common.types.MailSubClass;
 import com.fedex.smartpost.common.types.MeasurementSource;
 import com.fedex.smartpost.common.types.ParcelSize;
 import com.fedex.smartpost.common.types.ProcessingCategory;
 import com.fedex.smartpost.common.types.Shipment;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 import static com.fedex.smartpost.utilities.MiscUtil.getXmlDate;
-import org.apache.log4j.Logger;
 
 public class ShipmentUtils {
-	private static final Logger logger = Logger.getLogger(ShipmentUtils.class);
+	private static final Log logger = LogFactory.getLog(ShipmentUtils.class);
 
 	private static String SortScanBase =
 			"<Shipment><Package><PackageId>02901001082007022425</PackageId><UsPostal>"

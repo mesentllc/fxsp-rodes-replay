@@ -1,8 +1,15 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
+import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,16 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
 public class BillingGroupDaoImpl extends NamedParameterJdbcTemplate implements BillingGroupDao {
-	private static final Logger logger = LogManager.getLogger(BillingGroupDao.class);
+	private static final Log logger = LogFactory.getLog(BillingGroupDao.class);
 	private static final String GET_RELEASED_SQL = ClassPathResourceUtil.getString("/dao/rodes/getReleasedBGs.sql");
 	private static final String GET_RAC_XFER_CTRL_SEQ_SQL = ClassPathResourceUtil.getString("/dao/rodes/getRacXferCtrlSeqs.sql");
 	private DataSource dataSource;

@@ -1,17 +1,5 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-
-import java.awt.dnd.DropTarget;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +7,15 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PackageDetailXferImpl extends NamedParameterJdbcTemplate implements PackageDetailXfer {
 	private static final String PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/xferRatingPackageId.sql");

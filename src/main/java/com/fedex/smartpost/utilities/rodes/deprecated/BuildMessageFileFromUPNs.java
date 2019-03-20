@@ -1,18 +1,18 @@
 package com.fedex.smartpost.utilities.rodes.deprecated;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 public class BuildMessageFileFromUPNs {
-	private static final Logger logger = LogManager.getLogger(BuildMessageFileFromUPNs.class);
+	private static final Log logger = LogFactory.getLog(BuildMessageFileFromUPNs.class);
 	private EDWDao edwDao;
 
 	public BuildMessageFileFromUPNs() {

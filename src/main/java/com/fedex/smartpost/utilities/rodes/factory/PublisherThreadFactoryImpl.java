@@ -1,14 +1,13 @@
 package com.fedex.smartpost.utilities.rodes.factory;
 
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.fedex.smartpost.utilities.rodes.thread.PublishThread;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
 
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.fedex.smartpost.utilities.rodes.thread.PublishThread;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 public class PublisherThreadFactoryImpl implements PublisherThreadFactory {
 	private JmsTemplate domesticPublisher;

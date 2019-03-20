@@ -1,20 +1,5 @@
 package com.fedex.smartpost.utilities.rodes;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.fedex.smartpost.common.business.FxspPackage;
 import com.fedex.smartpost.common.business.FxspPackageException;
 import com.fedex.smartpost.common.business.FxspPackageFactory;
@@ -25,18 +10,38 @@ import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.fedex.smartpost.utilities.transportation.dao.PackageDao;
+import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class CheckProposedFile {
-	private static final Logger logger = LogManager.getLogger(CheckProposedFile.class);
+	private static final Log logger = LogFactory.getLog(CheckProposedFile.class);
 	private EDWDao edwDao;
 	private BillingPackageDao billingPackageDao;
 	private OutboundOrdCrtEvntStatDao outboundOrdCrtEvntStatDao;
+	private PackageDao packageDao;
+	private PackageHistoryDao packageHistoryDao;
 
 	public CheckProposedFile() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		edwDao = (EDWDao)context.getBean("edwDao");
 		billingPackageDao = (BillingPackageDao)context.getBean("billingPackageDao");
 		outboundOrdCrtEvntStatDao = (OutboundOrdCrtEvntStatDao)context.getBean("outboundOrdCrtEvntStatDao");
+		packageDao = (PackageDao)context.getBean("transPackageDao");
+		packageHistoryDao = (PackageHistoryDao)context.getBean("transPackageHistDao");
 	}
 
 	private void process(List<String> filenames, boolean saveIt) throws IOException, SQLException {
@@ -51,6 +56,8 @@ public class CheckProposedFile {
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 //				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
+				packageDao.retrievePackages(packageIds);
+				packageHistoryDao.retrievePackages(packageIds);
 			}
 		}
 		closeConnections();
@@ -105,7 +112,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("D:/Support/2018-11-27/pkgIds.txt");
+			filenames.add("D:/Support/2019-03-14/KK_ND_pkg_ids.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

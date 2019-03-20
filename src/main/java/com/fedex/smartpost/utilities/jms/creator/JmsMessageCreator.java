@@ -1,13 +1,13 @@
 package com.fedex.smartpost.utilities.jms.creator;
 
+import org.springframework.jms.core.MessageCreator;
+
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import java.util.Enumeration;
 import java.util.Properties;
-
-import org.springframework.jms.core.MessageCreator;
 
 public class JmsMessageCreator implements MessageCreator {
 	private String message;

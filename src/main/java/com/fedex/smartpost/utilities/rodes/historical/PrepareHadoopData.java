@@ -1,5 +1,15 @@
 package com.fedex.smartpost.utilities.rodes.historical;
 
+import com.fedex.smartpost.utilities.HadoopFileUtils;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -11,18 +21,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fedex.smartpost.utilities.HadoopFileUtils;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 @Deprecated
 public class PrepareHadoopData {
-	private static final Logger logger = Logger.getLogger(PrepareHadoopData.class);
+	private static final Log logger = LogFactory.getLog(PrepareHadoopData.class);
 	private EDWDao edwDao;
 
 	public PrepareHadoopData() {

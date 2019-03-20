@@ -1,5 +1,15 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
+import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -9,20 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
-import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
-
 public class BillingGroupSummaryDaoImpl extends NamedParameterJdbcTemplate implements BillingGroupSummaryDao {
-	private static final Logger logger = LogManager.getLogger(BillingGroupSummaryDao.class);
+	private static final Log logger = LogFactory.getLog(BillingGroupSummaryDao.class);
 	private static final String RETRIEVE_SCAN_DATES_SQL = ClassPathResourceUtil.getString("dao/rodes/retrieveScanDates.sql");
 	private DataSource dataSource;
 

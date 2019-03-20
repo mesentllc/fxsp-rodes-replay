@@ -1,5 +1,10 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,14 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class ComputeImpactOfMessageFile {
-	private static final Logger logger = LogManager.getLogger(ComputeImpactOfMessageFile.class);
+	private static final Log logger = LogFactory.getLog(ComputeImpactOfMessageFile.class);
 
 	private void process(boolean isRecFile, boolean isOC) throws ParseException {
 		if (isOC) {

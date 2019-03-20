@@ -1,5 +1,18 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.dao.DomesticEventStatGateway;
+import com.fedex.smartpost.utilities.rodes.dao.ReturnsEventStatGateway;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import com.fedex.smartpost.utilities.rodes.model.EventRecord;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.fedex.smartpost.utilities.rodes.model.StatusTally;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -16,22 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.dao.DomesticEventStatGateway;
-import com.fedex.smartpost.utilities.rodes.dao.ReturnsEventStatGateway;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-import com.fedex.smartpost.utilities.rodes.model.EventRecord;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.fedex.smartpost.utilities.rodes.model.StatusTally;
-
 public class VerifyRun {
-	private static final Logger logger = LogManager.getLogger(VerifyRun.class);
+	private static final Log logger = LogFactory.getLog(VerifyRun.class);
 	private static final String[] urls = {"http://pje03534.ground.fedex.com:14150/rodes-pkg-aggregator/service/processAllDomesticEvents",
 										  "http://pje03534.ground.fedex.com:14150/rodes-pkg-aggregator/service/processAllReturnsEvents"};
 	private BillingPackageDao billingPackageDao;

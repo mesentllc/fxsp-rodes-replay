@@ -1,5 +1,16 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.factory.PublisherThreadFactory;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.fedex.smartpost.utilities.rodes.model.TransferContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,20 +25,8 @@ import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.factory.PublisherThreadFactory;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.fedex.smartpost.utilities.rodes.model.TransferContext;
-
 public class PublishFile {
-	private static final Logger logger = LogManager.getLogger(PublishFile.class);
+	private static final Log logger = LogFactory.getLog(PublishFile.class);
 	private final BlockingQueue<List<Message>> messageQueue = new LinkedBlockingQueue<>();
 	private final TransferContext messageContext = new TransferContext();
 	private List<Thread> messageThreadList = new ArrayList<>();

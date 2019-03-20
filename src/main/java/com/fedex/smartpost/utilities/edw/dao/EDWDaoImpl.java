@@ -1,5 +1,31 @@
 package com.fedex.smartpost.utilities.edw.dao;
 
+import com.fedex.smartpost.common.business.FxspPackage;
+import com.fedex.smartpost.common.business.FxspPackageFactory;
+import com.fedex.smartpost.common.types.MailClass;
+import com.fedex.smartpost.common.types.MailSubClass;
+import com.fedex.smartpost.common.types.MeasurementSource;
+import com.fedex.smartpost.common.types.ParcelSize;
+import com.fedex.smartpost.common.types.ProcessingCategory;
+import com.fedex.smartpost.common.types.Shipment;
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Instance;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.teradata.jdbc.TeraDriver;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,38 +51,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
 import static com.fedex.smartpost.utilities.MiscUtil.getXmlDate;
 
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
-import com.fedex.smartpost.common.types.MailClass;
-import com.fedex.smartpost.common.types.MailSubClass;
-import com.fedex.smartpost.common.types.MeasurementSource;
-import com.fedex.smartpost.common.types.ParcelSize;
-import com.fedex.smartpost.common.types.ProcessingCategory;
-import com.fedex.smartpost.common.types.Shipment;
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Instance;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.teradata.jdbc.TeraDriver;
-
 public class EDWDaoImpl implements EDWDao {
-	private static final Logger logger = LogManager.getLogger(EDWDao.class);
+	private static final Log logger = LogFactory.getLog(EDWDao.class);
 	private static final String CREATE_VOLATILE_TABLE =
         "create volatile table packages (pkg_barcd_nbr varchar(30)) on commit preserve rows";
 	private static final String CREATE_VOLATILE_UPN_TABLE =

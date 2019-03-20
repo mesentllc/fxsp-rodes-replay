@@ -1,5 +1,15 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,19 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class BuildMessageFileFromMaster {
-	private static final Logger logger = LogManager.getLogger(BuildMessageFileFromMaster.class);
+	private static final Log logger = LogFactory.getLog(BuildMessageFileFromMaster.class);
 	private EDWDao edwDao;
 
 	public BuildMessageFileFromMaster() {

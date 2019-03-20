@@ -1,18 +1,18 @@
 package com.fedex.smartpost.utilities.rodes.deprecated;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetBillingPackages {
 	private BillingPackageDao billingPackageDao;

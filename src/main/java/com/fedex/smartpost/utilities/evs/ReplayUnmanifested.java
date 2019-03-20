@@ -1,5 +1,25 @@
 package com.fedex.smartpost.utilities.evs;
 
+import com.fedex.smartpost.common.business.FxspPackage;
+import com.fedex.smartpost.common.business.FxspPackageException;
+import com.fedex.smartpost.common.business.FxspPackageFactory;
+import com.fedex.smartpost.postal.types.UnmanifestedComplexType;
+import com.fedex.smartpost.postal.types.UspsPostage;
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.evs.converter.UspsPostageTransactionMessageConverter;
+import com.fedex.smartpost.utilities.evs.factory.PublisherThreadFactory;
+import com.fedex.smartpost.utilities.evs.model.PostalPackage;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import com.fedex.smartpost.utilities.rodes.model.TransferContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -16,30 +36,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
-import com.fedex.smartpost.postal.types.UnmanifestedComplexType;
-import com.fedex.smartpost.postal.types.UspsPostage;
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.evs.converter.UspsPostageTransactionMessageConverter;
-import com.fedex.smartpost.utilities.evs.factory.PublisherThreadFactory;
-import com.fedex.smartpost.utilities.evs.model.PostalPackage;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.fedex.smartpost.utilities.rodes.model.TransferContext;
-
 public class ReplayUnmanifested {
-	private static final Logger logger = LogManager.getLogger(ReplayUnmanifested.class);
+	private static final Log logger = LogFactory.getLog(ReplayUnmanifested.class);
 	private UspsPostageTransactionMessageConverter postageTransactionMessageConverter;
 	private final BlockingQueue<List<Message>> messageQueue = new LinkedBlockingQueue<>();
 	private final TransferContext messageContext = new TransferContext();

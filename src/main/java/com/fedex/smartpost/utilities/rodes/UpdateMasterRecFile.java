@@ -1,5 +1,10 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,14 +12,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class UpdateMasterRecFile {
-	private static final Logger logger = LogManager.getLogger(UpdateMasterRecFile.class);
+	private static final Log logger = LogFactory.getLog(UpdateMasterRecFile.class);
 
 	private static void process(boolean isOC) throws ParseException, IOException {
 		if (isOC) {

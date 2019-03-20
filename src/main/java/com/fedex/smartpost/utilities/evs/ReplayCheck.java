@@ -1,22 +1,22 @@
 package com.fedex.smartpost.utilities.evs;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-
 public class ReplayCheck {
-	private static final Logger logger = Logger.getLogger(ReplayCheck.class);
+	private static final Log logger = LogFactory.getLog(ReplayCheck.class);
 	private BillingPackageDao billingPackageDao;
 	private OutboundOrdCrtEvntStatDao outboundOrdCrtEvntStatDao;
 

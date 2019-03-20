@@ -1,17 +1,17 @@
 package com.fedex.smartpost.utilities.rodes;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 public class DuplicatePackageCountInFile {
-	private static final Logger logger = LogManager.getLogger(DuplicatePackageCountInFile.class);
+	private static final Log logger = LogFactory.getLog(DuplicatePackageCountInFile.class);
 
 	public static void main(String[] args) throws IOException {
 		DuplicatePackageCountInFile.process("D:/Support/2018-02-15/replayList-mod.txt");

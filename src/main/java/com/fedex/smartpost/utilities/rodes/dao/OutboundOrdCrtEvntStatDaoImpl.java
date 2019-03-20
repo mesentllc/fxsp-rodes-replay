@@ -1,21 +1,21 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
+import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-
-import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
 public class OutboundOrdCrtEvntStatDaoImpl extends NamedParameterJdbcTemplate implements OutboundOrdCrtEvntStatDao {
-	private static final Logger logger = Logger.getLogger(OutboundOrdCrtEvntStatDao.class);
+	private static final Log logger = LogFactory.getLog(OutboundOrdCrtEvntStatDao.class);
 	private static final String EXISTING_OC_EVENTS = ClassPathResourceUtil.getString("dao/rodes/ExistingOCEvents.sql");
 	private DataSource dataSource;
 

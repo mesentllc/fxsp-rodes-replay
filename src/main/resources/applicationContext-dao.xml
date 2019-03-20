@@ -43,4 +43,12 @@
 	<bean id="edwDao" class="com.fedex.smartpost.utilities.edw.dao.EDWDaoImpl">
 		<constructor-arg ref="edwDataSource" />
 	</bean>
+
+    <bean id="transPackageDao" class="com.fedex.smartpost.utilities.transportation.dao.PackageDaoImpl">
+        <constructor-arg ref="transDS" />
+    </bean>
+
+    <bean id="transPackageHistDao" class="com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDaoImpl">
+        <constructor-arg ref="transDS" />
+    </bean>
 </beans>

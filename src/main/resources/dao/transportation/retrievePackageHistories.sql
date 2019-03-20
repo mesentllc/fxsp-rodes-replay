@@ -1,0 +1,2 @@
+SELECT package_id
+FROM SPTRPRT_SCHEMA.PACKAGE_HISTORY WHERE package_id IN (:pkgList)

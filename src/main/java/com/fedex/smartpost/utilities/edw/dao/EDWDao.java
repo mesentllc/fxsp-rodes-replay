@@ -1,15 +1,15 @@
 package com.fedex.smartpost.utilities.edw.dao;
 
+import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Instance;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Instance;
 
 public interface EDWDao {
 	String SELECT_PACKAGES_FROM_EDW = ClassPathResourceUtil.getString("/dao/edw/selectPackagesFromEDW.sql");

@@ -1,5 +1,11 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.model.Message;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,15 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.model.Message;
-
 public class ExtractMessagesFromRecMaster {
-	private static final Logger logger = LogManager.getLogger(ExtractMessagesFromRecMaster.class);
+	private static final Log logger = LogFactory.getLog(ExtractMessagesFromRecMaster.class);
 
 	private void process(String scanDates, boolean isOC) throws ParseException, IOException {
 		if (isOC) {

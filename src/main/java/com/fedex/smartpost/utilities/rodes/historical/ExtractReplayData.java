@@ -1,5 +1,16 @@
 package com.fedex.smartpost.utilities.rodes.historical;
 
+import com.fedex.smartpost.utilities.HadoopFileUtils;
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.ShipmentUtils;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,19 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.utilities.HadoopFileUtils;
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.ShipmentUtils;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
-
 public class ExtractReplayData {
-	private static final Logger logger = Logger.getLogger(ExtractReplayData.class);
+	private static final Log logger = LogFactory.getLog(ExtractReplayData.class);
 	private static final String MASTER_FILE = "/Support/EdwMasterReplayRequests.rec";
 	private static final String MIN_RANGE = "2015-12-01";
 	private static final String MAX_RANGE = "2016-03-01";

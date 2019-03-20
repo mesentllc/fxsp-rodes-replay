@@ -10,12 +10,14 @@ import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.ShipmentUtils;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ExtractReplayFromBadRecs {
-	private static final Logger logger = Logger.getLogger(ExtractReplayFromBadRecs.class);
+	private static final Log logger = LogFactory.getLog(ExtractReplayFromBadRecs.class);
 	private static final String MASTER_FILE = "/Support/SortVsRated/EdwMasterReplayRequests.rec";
 	private static final ShipmentUtils shipmentUtils = new ShipmentUtils();
 	private EDWDao edwDao;

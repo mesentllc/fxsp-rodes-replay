@@ -1,8 +1,8 @@
 package com.fedex.smartpost.utilities.rodes.model;
 
-import java.util.Date;
-
 import com.fedex.smartpost.common.business.FxspPackageFactory;
+
+import java.util.Date;
 
 public class Message {
     private String payload;

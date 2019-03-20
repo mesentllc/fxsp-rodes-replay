@@ -1,14 +1,5 @@
 package com.fedex.smartpost.utilities.rodes.deprecated;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.rodes.dao.BillingGroupDao;
@@ -20,13 +11,22 @@ import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.EventRecord;
 import com.fedex.smartpost.utilities.rodes.model.Message;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class PreReplayProcess {
-	private static final Logger logger = LogManager.getLogger(PreReplayProcess.class);
+	private static final Log logger = LogFactory.getLog(PreReplayProcess.class);
 	private BillingPackageDao billingPackageDao;
 	private BillingGroupDao billingGroupDao;
 	private BillingPackageEpdiEventGateway billingPackageEpdiEventGateway;

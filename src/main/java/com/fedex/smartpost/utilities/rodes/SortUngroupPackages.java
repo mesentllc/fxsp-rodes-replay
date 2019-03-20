@@ -1,5 +1,16 @@
 package com.fedex.smartpost.utilities.rodes;
 
+import com.fedex.smartpost.common.business.FxspPackage;
+import com.fedex.smartpost.common.business.FxspPackageException;
+import com.fedex.smartpost.common.business.FxspPackageFactory;
+import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,19 +24,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
-import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-
 public class SortUngroupPackages {
-	private static final Logger logger = Logger.getLogger(SortUngroupPackages.class);
+	private static final Log logger = LogFactory.getLog(SortUngroupPackages.class);
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
 	private BillingPackageDao billingPackageDao;
 

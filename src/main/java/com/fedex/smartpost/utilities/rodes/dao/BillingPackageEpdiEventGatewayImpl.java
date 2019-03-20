@@ -1,20 +1,18 @@
 package com.fedex.smartpost.utilities.rodes.dao;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
 import com.fedex.smartpost.utilities.rodes.model.EPDIRecord;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BillingPackageEpdiEventGatewayImpl extends NamedParameterJdbcTemplate implements BillingPackageEpdiEventGateway {
     private static final String EPDI_BY_PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/epdiStgByPackageId.sql");
