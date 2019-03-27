@@ -40,7 +40,11 @@
 		<constructor-arg ref="oracleDataSource" />
 	</bean>
 
-	<bean id="edwDao" class="com.fedex.smartpost.utilities.edw.dao.EDWDaoImpl">
+    <bean id="unmanifestedPackageDao" class="com.fedex.smartpost.utilities.rodes.dao.UnmanifestedPackageDaoImpl">
+        <constructor-arg ref="oracleDataSource" />
+    </bean>
+
+    <bean id="edwDao" class="com.fedex.smartpost.utilities.edw.dao.EDWDaoImpl">
 		<constructor-arg ref="edwDataSource" />
 	</bean>
 

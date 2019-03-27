@@ -54,7 +54,7 @@ public class PreReplayProcess {
 
 		logger.info("Number of unique packages in file: " + packageIds.size());
 		logger.info("Number of package ids found in BILLING_PACKAGE_EPDI_EVENT: " + billingPackageEpdiEventGateway.retrieveEPDIRecordsByPackageIds(packageIds).size());
-		logger.info("Number of package ids found in BILLING_PACKAGE_HISTORY: " + billingPackageHistoryGateway.retrieveEPDIRecordsByPackageIds(packageIds).size());
+		logger.info("Number of package ids found in BILLING_PACKAGE_HISTORY: " + billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds).size());
 		existingPackages = billingPackageDao.retrieveDups(packageIds);
 		logger.info("Number of package ids found in BILLING_PACKAGE: " + existingPackages.size());
 		discoverReleasedBPs(existingPackages);

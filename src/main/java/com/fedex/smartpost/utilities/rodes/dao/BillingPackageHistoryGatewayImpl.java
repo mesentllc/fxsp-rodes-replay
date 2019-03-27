@@ -2,6 +2,8 @@ package com.fedex.smartpost.utilities.rodes.dao;
 
 import com.fedex.smartpost.common.io.classpath.ClassPathResourceUtil;
 import com.fedex.smartpost.utilities.rodes.model.EPDIRecord;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BillingPackageHistoryGatewayImpl extends NamedParameterJdbcTemplate implements BillingPackageHistoryGateway {
+	private static final Log log = LogFactory.getLog(BillingPackageHistoryGateway.class);
     private static final String EPDI_BY_PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/epdiHistoryByPackageId.sql");
     private DataSource dataSource;
 
@@ -23,7 +26,7 @@ public class BillingPackageHistoryGatewayImpl extends NamedParameterJdbcTemplate
         this.dataSource = dataSource;
     }
 
-    private static RowMapper<EPDIRecord> EPDI_MAPPER = (rs, rowNum) -> {
+    private static RowMapper<EPDIRecord> BILLING_PACKAGE_MAPPER = (rs, rowNum) -> {
         EPDIRecord epdiRecord = new EPDIRecord();
 
         epdiRecord.setFedexPkgId(rs.getString("FEDEX_PKG_ID"));
@@ -74,7 +77,8 @@ public class BillingPackageHistoryGatewayImpl extends NamedParameterJdbcTemplate
     };
 
     @Override
-    public List<EPDIRecord> retrieveEPDIRecordsByPackageIds(List<String> packageIds) {
+    public List<EPDIRecord> retrieveBillingPackageHistoryRecordsByPackageIds(List<String> packageIds) {
+	    log.info("Total package ids to check in BILLING_PACKAGE_HISTORY [RODeS]: " + packageIds.size());
         MapSqlParameterSource parameters;
 		List<EPDIRecord> epdiRecords = new ArrayList<>();
 		int startPos = 0;
@@ -84,9 +88,10 @@ public class BillingPackageHistoryGatewayImpl extends NamedParameterJdbcTemplate
 			length = Math.min(packageIds.size() - startPos, 1000);
 			parameters = new MapSqlParameterSource();
 	        parameters.addValue("packageIds", packageIds.subList(startPos, startPos + length));
-			epdiRecords.addAll(query(EPDI_BY_PACKAGE_ID_SQL, parameters, EPDI_MAPPER));
+			epdiRecords.addAll(query(EPDI_BY_PACKAGE_ID_SQL, parameters, BILLING_PACKAGE_MAPPER));
 			startPos += length;
 		}
+	    log.info("Total package ids found in BILLING_PACKAGE_HISTORY [RODeS]: " + epdiRecords.size());
         return epdiRecords;
 	}
 

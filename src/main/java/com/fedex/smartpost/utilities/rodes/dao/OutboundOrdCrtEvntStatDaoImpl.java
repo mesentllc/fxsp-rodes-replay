@@ -30,14 +30,14 @@ public class OutboundOrdCrtEvntStatDaoImpl extends NamedParameterJdbcTemplate im
 		int curPtr = 0;
 		int batchSize;
 
-		logger.info("Total package ids to check in OUTBOUND_ORD_CRT_EVNT_STAT: " + packageIds.size());
+		logger.info("Total package ids to check in OUTBOUND_ORD_CRT_EVNT_STAT [RODeS]: " + packageIds.size());
 		while (packageIds.size() > curPtr) {
 			batchSize = Math.min(1000, packageIds.size() - curPtr);
 			MapSqlParameterSource params = new MapSqlParameterSource().addValue("packageIds", packageIds.subList(curPtr, curPtr + batchSize));
 			ocRecords.addAll(queryForList(EXISTING_OC_EVENTS, params, String.class));
 			curPtr += batchSize;
 		}
-		logger.info("Total package ids found in OUTBOUND_ORD_CRT_EVNT_STAT: " + ocRecords.size());
+		logger.info("Total package ids found in OUTBOUND_ORD_CRT_EVNT_STAT [RODeS]: " + ocRecords.size());
 		return ocRecords;
 	}
 

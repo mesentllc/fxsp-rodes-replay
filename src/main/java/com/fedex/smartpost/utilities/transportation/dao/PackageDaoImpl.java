@@ -7,17 +7,23 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PackageDaoImpl extends NamedParameterJdbcTemplate implements PackageDao {
 	private static final Log log = LogFactory.getLog(PackageDao.class);
 	private static final String PACKAGES_IN_TRANS = ClassPathResourceUtil.getString("/dao/transportation/retrievePackages.sql");
+	private DataSource dataSource;
 
 	public PackageDaoImpl(DataSource dataSource) {
 		super(dataSource);
+		this.dataSource = dataSource;
 	}
 
 	private static RowMapper<BillingPackage> BP_LIST_MAPPER = (rs, rowNum) -> {
@@ -54,5 +60,12 @@ public class PackageDaoImpl extends NamedParameterJdbcTemplate implements Packag
 		}
 		log.info("Total package ids found in PACKAGE [TRANS]: " + existingPackages.size());
 		return existingPackages;
+	}
+
+	@Override
+	@PreDestroy
+	public void close() throws SQLException {
+		Connection connection = DataSourceUtils.getConnection(dataSource);
+		connection.close();
 	}
 }

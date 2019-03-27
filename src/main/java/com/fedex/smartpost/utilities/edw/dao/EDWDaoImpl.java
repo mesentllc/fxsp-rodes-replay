@@ -693,7 +693,7 @@ public class EDWDaoImpl implements EDWDao {
 					packageCount++;
 				}
 			}
-			logger.info("Number of UNRELEASED package ids using PACKAGE_FACT: " + packageCount);
+			logger.info("Number of package ids from FXSP_F_PACKAGE that doesn't exist in RODES_RATING_RELEASE [EDW]: " + packageCount);
 			rs.close();
 			stmt.execute(DROP_VOLATILE_TABLE);
 			stmt.close();
@@ -752,7 +752,7 @@ public class EDWDaoImpl implements EDWDao {
 				instances.add(instance);
 				packageCount++;
 			}
-			logger.info("Number of UNRELEASED package ids using PACKAGE_FACT: " + packageCount);
+			logger.info("Number of package ids in FXSP_RODES_RATING_RELEASE [EDW]: " + packageCount);
 			rs.close();
 			stmt.execute(DROP_VOLATILE_TABLE);
 			stmt.close();

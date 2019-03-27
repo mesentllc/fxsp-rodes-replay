@@ -6,6 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface BillingPackageHistoryGateway {
-	List<EPDIRecord> retrieveEPDIRecordsByPackageIds(List<String> packageIds);
+	List<EPDIRecord> retrieveBillingPackageHistoryRecordsByPackageIds(List<String> packageIds);
 	void close() throws SQLException;
 }
