@@ -24,7 +24,7 @@ public class CheckPackageStatus {
 		CheckPackageStatus checkPackageStatus = new CheckPackageStatus();
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "D:/Support/2018-03-05/toReplay.txt";
+			args[0] = "D:/Support/2019-03-14/2019-04-02-packages.txt";
 		}
 		checkPackageStatus.process(args[0]);
 	}

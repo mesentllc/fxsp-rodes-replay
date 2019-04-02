@@ -54,7 +54,7 @@ public class CheckProposedFile {
 		unmanifestedPackageDao = (UnmanifestedPackageDao)context.getBean("unmanifestedPackageDao");
 	}
 
-	private void process(List<String> filenames, boolean saveIt) throws IOException, SQLException {
+	private void process(List<String> filenames, boolean saveIt) throws SQLException {
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
 			if (saveIt) {
@@ -63,15 +63,15 @@ public class CheckProposedFile {
 			else {
 				List<String> packageIds = runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
 //				dumpUnreleased(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
-				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
-				edwDao.retrieveReleasedPackages(packageIds);
+//				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
+//				edwDao.retrieveReleasedPackages(packageIds);
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 //				dumpIds(dups);
-				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
-				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
+//				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
+//				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 				packageDao.retrievePackages(packageIds);
 				packageHistoryDao.retrievePackages(packageIds);
-				dumpStatuses(unmanifestedPackageDao.getUnmanifestedStatusByPackageId(packageIds));
+//				dumpStatuses(unmanifestedPackageDao.getUnmanifestedStatusByPackageId(packageIds));
 			}
 		}
 		closeConnections();
@@ -127,7 +127,7 @@ public class CheckProposedFile {
 		}
 	}
 
-	public static void main(String[] args) throws IOException, SQLException {
+	public static void main(String[] args) throws SQLException {
 		// Run this process to check how many package ids are not existing currently in the EDW Database.
 		//  It might prove that the file doesn't need to be replayed.
 		List<String> filenames;
@@ -136,7 +136,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("D:/Support/2019-03-14/KK_ND_pkg_ids.txt");
+			filenames.add("D:/Support/2019-03-14/2019-04-02-packages.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

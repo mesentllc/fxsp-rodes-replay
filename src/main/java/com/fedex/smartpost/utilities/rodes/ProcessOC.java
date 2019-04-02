@@ -41,7 +41,7 @@ public class ProcessOC {
 	}
 
 	private void process(List<String> filenames, boolean useSPEeDSTable) throws IOException {
-		EDWResults edwResults = null;
+		EDWResults edwResults;
 		Map<Long, String> shareMap = buildShareMap();
 
 		for (String filename : filenames) {
@@ -96,7 +96,7 @@ public class ProcessOC {
 	private static void buildFile(EDWResults edwResults) throws IOException {
 		int processed = 0;
 
-		String filename = "/Support/SortVsRated/StartingOCs-Jan.rec";
+		String filename = "D:\\Support\\2019-03-14\\EPDI_Jan.rec";
 //		String filename = "/Support/SortVsRated/OC-without.rec";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
 		for (Date date : edwResults.getScanDates()) {
@@ -177,14 +177,14 @@ public class ProcessOC {
 
 		if (args.length == 0) {
 			filenames = new ArrayList<>();
-			filenames.add("/Support/2016.10.11/replayList.txt");
+			filenames.add("D:\\Support\\2019-03-14\\pkg_ids.txt");
 //			filenames.add("/Support/EVS_Unmanifested/02.2016/replay-2016-02.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);
 		}
 		ProcessOC processOC = new ProcessOC();
-		processOC.process(filenames, false);
+		processOC.process(filenames, true);
 	}
 
 	// Run this process to rip a set out of the original record file to be sent to the publisher

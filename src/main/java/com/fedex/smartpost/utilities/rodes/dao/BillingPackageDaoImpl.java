@@ -85,7 +85,7 @@ public class BillingPackageDaoImpl extends NamedParameterJdbcTemplate implements
 		deliveryTypes.add("U");
 		deliveryTypes.add("C");
 		deliveryTypes.add("F");
-		logger.info("Total package ids to check in BILLING_PACKAGE: " + packageList.size());
+		logger.info("Total package ids to check in BILLING_PACKAGE [RODeS]: " + packageList.size());
 		while (startPos < packageList.size()) {
 			length = Math.min(packageList.size() - startPos, 1000);
 			parameters = new MapSqlParameterSource();
@@ -94,7 +94,7 @@ public class BillingPackageDaoImpl extends NamedParameterJdbcTemplate implements
 			existingPackages.addAll(query(RETRIEVE_DUPS_SQL, parameters, BP_LIST_MAPPER));
 			startPos += length;
 		}
-		logger.info("Total package ids found in BILLING_PACKAGE: " + existingPackages.size());
+		logger.info("Total package ids found in BILLING_PACKAGE [RODeS]: " + existingPackages.size());
         return existingPackages;
     }
 

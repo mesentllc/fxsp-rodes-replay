@@ -138,7 +138,7 @@ public class PublishFile {
 		// by RODeS downstream processes.
 		if (args.length != 3) {
 			args = new String[3];
-			args[0] = "/Support/2018-02-27/ToBeReplayed-2018.02.28.rec";
+			args[0] = "/Support/ToBeReplayed-2019.04.03.rec";
 			args[1] = "2";
 			args[2] = "SS"; // SS or OC
 		}

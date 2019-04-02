@@ -5,11 +5,14 @@ import com.fedex.smartpost.common.business.FxspPackageFactory;
 import com.fedex.smartpost.common.types.MailClass;
 import com.fedex.smartpost.common.types.MailSubClass;
 import com.fedex.smartpost.common.types.MeasurementSource;
+import com.fedex.smartpost.common.types.PackageAttributes;
 import com.fedex.smartpost.common.types.ParcelSize;
 import com.fedex.smartpost.common.types.ProcessingCategory;
 import com.fedex.smartpost.common.types.Shipment;
+import com.fedex.smartpost.common.types.Shipping;
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
+import com.fedex.smartpost.utilities.rodes.enums.BillingServiceCode;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.Instance;
 import com.fedex.smartpost.utilities.rodes.model.Message;
@@ -18,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.security.access.method.P;
 
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
@@ -442,18 +446,19 @@ public class EDWDaoImpl implements EDWDao {
 			ps.executeBatch();
 			ps.close();
 			rs = stmt.executeQuery(GET_ORDER_CREATES_BY_PACKAGES);
+//			rs = stmt.executeQuery(GET_SHIPMENTS_USING_F_PACKAGE);
 			while (rs.next()) {
 				String payload;
 				String packageId = rs.getString("pkg_barcd_nbr");
 				try {
 					fxspPackage = FxspPackageFactory.createFromTrackingId(packageId);
-					populateShipment(shipment, packageId,
-									 rs.getString("mail_class_cd") + rs.getString("mail_sub_class_cd"),
+					populateShipment(shipment, packageId, getMailClass(rs),
 									 rs.getString("prcs_size_cd"), rs.getString("prcs_ctgy_cd"), rs.getString("cntnr_nm"),
-									 rs.getString("dest_sort_cd"), rs.getTimestamp("mindate"), rs.getInt("hub_cd"),
+									 safeTrim(rs.getString("dest_sort_cd")), rs.getTimestamp("mindate"), rs.getInt("hub_cd"),
 									 rs.getBigDecimal("pkg_wgt"), rs.getBigDecimal("pkg_lth_qty"),
 									 rs.getBigDecimal("pkg_width_qty"), rs.getBigDecimal("pkg_hgt_qty"),
 									 rs.getString("wgt_src_cd"), rs.getString("wgt_src_cd"), fxspPackage.isImpb());
+					populateOCFields(shipment, rs);
 					payload = encodeObject(shipment);
 					if ((payload != null) && (payload.length() > 0)) {
 						edwResults.addMessage(rs.getTimestamp("mindate"), new Message(rs.getLong("unvsl_pkg_nbr"), rs.getTimestamp("mindate"),
@@ -478,6 +483,38 @@ public class EDWDaoImpl implements EDWDao {
 			logger.error("Setup Error: " + e.getMessage());
 		}
 		return edwResults;
+	}
+
+	private String safeTrim(String dest_sort_cd) {
+		if (dest_sort_cd != null) {
+			return dest_sort_cd.trim();
+		}
+		return dest_sort_cd;
+	}
+
+	private String getMailClass(ResultSet rs) throws SQLException {
+		int serviceCode = 0;
+
+		try {
+			serviceCode = rs.getInt("blng_svc_cd");
+		}
+		catch (SQLException e) {
+			logger.debug("Billing Service Code not found.");
+		}
+		if (serviceCode > 0) {
+			return BillingServiceCode.getMailClass(serviceCode);
+		}
+		return rs.getString("mail_class_cd") + rs.getString("mail_sub_class_cd");
+	}
+
+	private void populateOCFields(Shipment shipment, ResultSet rs) throws SQLException {
+		shipment.setShipping(new Shipping());
+		shipment.getShipping().setCustomerManifestId(rs.getString("ord_crt_mnfst_grp_id_nbr"));
+		shipment.getShipping().setManifestGroupText(rs.getString("ord_cr_cust_mtnfst_nm"));
+		shipment.getShipping().setMeterNumber(rs.getString("ord_cr_meter_nbr"));
+		shipment.getPackage().setPackageAttributes(new PackageAttributes());
+		shipment.getPackage().getPackageAttributes().setBillingReferenceNumber(rs.getString("ord_cr_blng_ref_nbr"));
+		shipment.getPackage().getPackageAttributes().setPurchaseOrderNumber(rs.getString("ord_cr_po_nbr"));
 	}
 
 	@Override

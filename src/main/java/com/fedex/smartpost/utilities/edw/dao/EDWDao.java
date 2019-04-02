@@ -25,6 +25,7 @@ public interface EDWDao {
 	String GET_POSTAL_CODE_BY_SHARE = ClassPathResourceUtil.getString("/dao/edw/retrievePostalCodeBySHARE.sql");
 	String GET_PACKAGES_FOR_REPLAY = ClassPathResourceUtil.getString("/dao/edw/straightExtractForReplay.sql");
 	String GET_PACKAGES_FOR_REPLAY_W_OC_WEIGHT = ClassPathResourceUtil.getString("/dao/edw/selectEDWPackageWithOCWeight.sql");
+	String GET_SHIPMENTS_USING_F_PACKAGE = ClassPathResourceUtil.getString("/dao/edw/selectShipmentsUsingFPackage.sql");
 	EDWResults retrievePackageIds(List<String> packageList, String sql);
 	EDWResults retrievePackageIdsViaUPN(List<Long> packageList, String sql, boolean createRecFile);
 	String buildFileUsingPackageIdsAndSPEEDS(List<String> packageList, boolean createFile) throws IOException;
