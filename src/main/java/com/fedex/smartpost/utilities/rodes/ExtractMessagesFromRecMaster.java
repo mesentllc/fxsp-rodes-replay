@@ -79,15 +79,12 @@ public class ExtractMessagesFromRecMaster {
 	public static void main(String[] args) throws IOException, ParseException {
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "2019-01-11, 2019-01-12, 2019-01-13, 2019-01-14, 2019-01-15, " +
-			          "2019-01-16, 2019-01-17, 2019-01-18, 2019-01-19, 2019-01-20";
-//			args[0] = "2019-01-21, 2019-01-22, 2019-01-23, 2019-01-24, 2019-01-25, " +
-//			          "2019-01-26, 2019-01-27, 2019-01-28, 2019-01-29, 2019-01-30";
-//			args[0] = "2019-01-31, 2019-02-01, 2019-02-08";
+			args[0] = "2019-02-26, 2019-02-27, 2019-02-28, 2019-03-01, 2019-03-02, " +
+			          "2019-03-03, 2019-03-06";
 //			args[0] = null;
 		}
 		ExtractMessagesFromRecMaster buildMessageFileFromMaster = new ExtractMessagesFromRecMaster();
 //		buildMessageFileFromMaster.process(args[0], true);
-		buildMessageFileFromMaster.process(args[0], "D:\\Support\\2019-03-14\\EPDI_Jan.rec");
+		buildMessageFileFromMaster.process(args[0], "D:\\Support\\2019-Feb-Replay\\EPDI_Feb.rec");
 	}
 }

@@ -65,6 +65,6 @@ public class ComputeImpactOfMessageFile {
 	public static void main(String[] args) throws ParseException {
 		ComputeImpactOfMessageFile computeImpactOfMessageFile = new ComputeImpactOfMessageFile();
 //		computeImpactOfMessageFile.process(false, false);
-		computeImpactOfMessageFile.process("D:\\Support\\2019-03-14\\EPDI_Jan.rec");
+		computeImpactOfMessageFile.process("/Support/2019-Feb-Replay/EPDI_Feb.rec");
 	}
 }

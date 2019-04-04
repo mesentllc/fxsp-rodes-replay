@@ -1,18 +1,13 @@
 package com.fedex.smartpost.utilities.rodes;
 
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageEpdiEventGateway;
 import com.fedex.smartpost.utilities.rodes.dao.BillingPackageHistoryGateway;
 import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
 import com.fedex.smartpost.utilities.rodes.dao.UnmanifestedPackageDao;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
-import com.fedex.smartpost.utilities.rodes.model.Instance;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import com.fedex.smartpost.utilities.transportation.dao.PackageDao;
 import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
@@ -44,7 +39,7 @@ public class CheckProposedFile {
 	private UnmanifestedPackageDao unmanifestedPackageDao;
 
 	public CheckProposedFile() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		edwDao = (EDWDao)context.getBean("edwDao");
 		billingPackageDao = (BillingPackageDao)context.getBean("billingPackageDao");
 		outboundOrdCrtEvntStatDao = (OutboundOrdCrtEvntStatDao)context.getBean("outboundOrdCrtEvntStatDao");
@@ -54,23 +49,23 @@ public class CheckProposedFile {
 		unmanifestedPackageDao = (UnmanifestedPackageDao)context.getBean("unmanifestedPackageDao");
 	}
 
-	private void process(List<String> filenames, boolean saveIt) throws SQLException {
+	private void process(List<String> filenames, boolean saveIt) throws SQLException, IOException {
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
 			if (saveIt) {
 				new UpdateMasterReplayFile(edwDao, filename);
 			}
 			else {
-				List<String> packageIds = runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
 //				dumpUnreleased(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
 //				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
-//				edwDao.retrieveReleasedPackages(packageIds);
+				edwDao.retrieveReleasedPackages(packageIds);
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 //				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
 //				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
-				packageDao.retrievePackages(packageIds);
-				packageHistoryDao.retrievePackages(packageIds);
+//				packageDao.retrievePackages(packageIds);
+//				packageHistoryDao.retrievePackages(packageIds);
 //				dumpStatuses(unmanifestedPackageDao.getUnmanifestedStatusByPackageId(packageIds));
 			}
 		}
@@ -96,7 +91,7 @@ public class CheckProposedFile {
 	private void dumpUnreleased(EDWResults edwResults) throws IOException {
 		Date now = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		BufferedWriter bw = new BufferedWriter(new FileWriter("D:/Support/unreleased-" + sdf.format(now) + ".txt"));
+		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-Feb-Replay/unreleased-" + sdf.format(now) + ".txt"));
 		for (Date scanDate : edwResults.getScanDates()) {
 			List<Message> messageList = edwResults.getMessages(scanDate);
 			for (Message message : messageList) {
@@ -106,28 +101,13 @@ public class CheckProposedFile {
 		bw.close();
 	}
 
-	private List<String> runThroughBusinessCommon(List<String> packageIds) {
-		List<String> processedList = new ArrayList<>();
-
-		for (String packageId : packageIds) {
-			try {
-				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(packageId.trim());
-				processedList.add(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2));
-			}
-			catch (FxspPackageException e) {
-				logger.debug("Exception found: ", e);
-			}
-		}
-		return processedList;
-	}
-
 	private void dumpIds(List<BillingPackage> billingPackages) {
 		for (BillingPackage billingPackage : billingPackages) {
 			logger.info(billingPackage.getFedexPkgId() + " -> Status: " + billingPackage.getStatus());
 		}
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, IOException {
 		// Run this process to check how many package ids are not existing currently in the EDW Database.
 		//  It might prove that the file doesn't need to be replayed.
 		List<String> filenames;
@@ -136,7 +116,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("D:/Support/2019-03-14/2019-04-02-packages.txt");
+			filenames.add("/Support/2019-Feb-Replay/packageIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

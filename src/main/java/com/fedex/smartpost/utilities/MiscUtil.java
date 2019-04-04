@@ -48,6 +48,35 @@ public class MiscUtil {
 	public static SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat SDF2 = new SimpleDateFormat("MM/dd/yyyy");
 
+	public static List<String> runThroughBusinessCommon(List<String> packageIds) {
+		List<String> processedList = new ArrayList<>();
+
+		for (String packageId : packageIds) {
+			try {
+				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(packageId.trim());
+				processedList.add(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2));
+			}
+			catch (FxspPackageException e) {
+				logger.debug("Exception found: ", e);
+			}
+		}
+		return processedList;
+	}
+
+	public static void removeDups(List<String> packageIds, List<BillingPackage> dups) {
+		Set<String> duplicatePackageIds = new HashSet<>();
+		if (packageIds == null || dups == null) {
+			return;
+		}
+		logger.info("Starting package id count: " + packageIds.size());
+		for (BillingPackage bp : dups) {
+			duplicatePackageIds.add(bp.getFedexPkgId());
+		}
+		logger.info(duplicatePackageIds.size() + " duplicate records found.");
+		packageIds.removeAll(duplicatePackageIds);
+		logger.info("Remaining package id count: " + packageIds.size());
+	}
+
 	public static XMLGregorianCalendar getXmlDate(Date date) {
 		if (date != null) {
 			try {

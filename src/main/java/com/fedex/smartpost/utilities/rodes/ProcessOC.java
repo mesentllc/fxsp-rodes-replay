@@ -1,11 +1,9 @@
 package com.fedex.smartpost.utilities.rodes;
 
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import org.apache.commons.logging.Log;
@@ -42,11 +40,13 @@ public class ProcessOC {
 
 	private void process(List<String> filenames, boolean useSPEeDSTable) throws IOException {
 		EDWResults edwResults;
-		Map<Long, String> shareMap = buildShareMap();
+//		Map<Long, String> shareMap = buildShareMap();
 
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
-			List<String> packageIds = runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+			List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
+			MiscUtil.removeDups(packageIds, dups);
 			if (useSPEeDSTable) {
 				edwResults = edwDao.retrieveOCByPackageIds(packageIds);
 			}
@@ -96,7 +96,7 @@ public class ProcessOC {
 	private static void buildFile(EDWResults edwResults) throws IOException {
 		int processed = 0;
 
-		String filename = "D:\\Support\\2019-03-14\\EPDI_Jan.rec";
+		String filename = "/Support/2019-Feb-Replay/EPDI_Feb.rec";
 //		String filename = "/Support/SortVsRated/OC-without.rec";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
 		for (Date date : edwResults.getScanDates()) {
@@ -110,21 +110,6 @@ public class ProcessOC {
 		}
 		bw.close();
 		logger.info("Total records written: " + processed);
-	}
-
-	private static List<String> runThroughBusinessCommon(List<String> packageIds) {
-		List<String> processedList = new ArrayList<>();
-
-		for (String packageId : packageIds) {
-			try {
-				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(packageId.trim());
-				processedList.add(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2));
-			}
-			catch (FxspPackageException fpe) {
-				logger.debug("Exception Caught: ", fpe);
-			}
-		}
-		return processedList;
 	}
 
 	private void buildFileToPublish(String filename, int scanDatesToExtract) throws ParseException, IOException {
@@ -177,7 +162,7 @@ public class ProcessOC {
 
 		if (args.length == 0) {
 			filenames = new ArrayList<>();
-			filenames.add("D:\\Support\\2019-03-14\\pkg_ids.txt");
+			filenames.add("/Support/2019-Feb-Replay/packageIds.txt");
 //			filenames.add("/Support/EVS_Unmanifested/02.2016/replay-2016-02.txt");
 		}
 		else {

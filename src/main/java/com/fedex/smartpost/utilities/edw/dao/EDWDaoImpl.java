@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.security.access.method.P;
 
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
@@ -764,12 +763,14 @@ public class EDWDaoImpl implements EDWDao {
 		ResultSet rs;
 		int packageCount = 0;
 		int batchCount = 0;
+		int counter = 0;
 
 		try {
 			DriverManager.registerDriver(new TeraDriver());
 			conn = dataSource.getConnection();
 			stmt = conn.createStatement();
 			stmt.execute(CREATE_VOLATILE_TABLE);
+			logger.info("Number of packages to load into temporary EDW Table: " + packageList.size());
 			PreparedStatement ps = conn.prepareStatement("insert into packages (?)");
 			for (String item : packageList) {
 				if ((++batchCount % 5000) == 0) {
@@ -777,7 +778,9 @@ public class EDWDaoImpl implements EDWDao {
 				}
 				ps.setString(1, item);
 				ps.addBatch();
+				counter++;
 			}
+			logger.info("Total packages inserted into temporary EDW Table: " + counter);
 			ps.executeBatch();
 			ps.close();
 			rs = stmt.executeQuery(SELECT_RELEASED_PACKAGES_FROM_RRR);

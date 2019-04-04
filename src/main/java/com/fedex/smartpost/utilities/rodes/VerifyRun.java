@@ -14,15 +14,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +79,7 @@ public class VerifyRun {
 		}
 	}
 
-	private void process(String arg) throws ParseException, IOException {
+	private void process(String arg) throws ParseException {
 		List<Message> messages = MiscUtil.retreiveMessagesFromFile(arg);
 		Set<String> packageIds = MiscUtil.retreivePackageIdsFromMessages(messages);
 		List<BillingPackage> bpList = billingPackageDao.retrieveDups(new ArrayList<>(packageIds));
@@ -96,17 +93,6 @@ public class VerifyRun {
 		displayTally(domesticEventStatGateway.retrieveEventRecords(new ArrayList<>(packageIds)));
 		logger.info("RETURNS PACKAGE EVENTS FROM MISSING PACKAGE IDS");
 		displayTally(returnsEventStatGateway.retrieveEventRecords(new ArrayList<>(packageIds)));
-		dump(packageIds);
-	}
-
-	private void dump(Set<String> packageIds) throws IOException {
-		Calendar cal = Calendar.getInstance();
-		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/MissingReplays-" + MiscUtil.SDF.format(cal.getTime()) + ".rec"));
-
-		for (String packageId : packageIds) {
-			bw.write(packageId + "\r\n");
-		}
-		bw.close();
 	}
 
 	private void kickOffProcessing() throws IOException {
@@ -124,7 +110,7 @@ public class VerifyRun {
 		// You should run this application to verify that the packages were replayed.
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "/Support/ToBeReplayed-2019.04.03.rec";
+			args[0] = "/Support/2019-Feb-Replay/2019-04-05/ToBeReplayed.rec";
 		}
 		VerifyRun verifyRun = new VerifyRun();
 		verifyRun.kickOffProcessing();

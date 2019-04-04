@@ -18,7 +18,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,28 +54,14 @@ public class UpdateMasterReplayFile {
 			logger.info("Reading file: " + filename);
 			List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
 			logger.info(packageIds.size() + " records read from " + filename);
-//			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
-//			removeDups(packageIds, dups);
+			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
+			MiscUtil.removeDups(packageIds, dups);
 			masterMap = addToMasterRecords(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
 		}
 		else {
 			masterMap = addToMasterRecords(null);
 		}
 		MiscUtil.storeMasterFile(MiscUtil.SS_MASTER_FILE, masterMap);
-	}
-
-	private void removeDups(List<String> packageIds, List<BillingPackage> dups) {
-		Set<String> duplicatePackageIds = new HashSet<>();
-		if (packageIds == null || dups == null) {
-			return;
-		}
-		logger.info("Starting package id count: " + packageIds.size());
-		for (BillingPackage bp : dups) {
-			duplicatePackageIds.add(bp.getFedexPkgId());
-		}
-		logger.info(duplicatePackageIds.size() + " duplicate records found.");
-		packageIds.removeAll(duplicatePackageIds);
-		logger.info("Reamining package id count: " + packageIds.size());
 	}
 
 	private Map<Long, Message> addToMasterRecords(EDWResults edwResults) throws ParseException, IOException {

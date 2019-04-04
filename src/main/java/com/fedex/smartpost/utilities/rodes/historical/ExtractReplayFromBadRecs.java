@@ -1,20 +1,19 @@
 package com.fedex.smartpost.utilities.rodes.historical;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.ShipmentUtils;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.evs.model.EDWDataRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ExtractReplayFromBadRecs {
 	private static final Log logger = LogFactory.getLog(ExtractReplayFromBadRecs.class);

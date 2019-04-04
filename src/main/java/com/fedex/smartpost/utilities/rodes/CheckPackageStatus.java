@@ -24,7 +24,7 @@ public class CheckPackageStatus {
 		CheckPackageStatus checkPackageStatus = new CheckPackageStatus();
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "D:/Support/2019-03-14/2019-04-02-packages.txt";
+			args[0] = "/Support/2019-Feb-Replay/2019-04-05/packageIds.txt";
 		}
 		checkPackageStatus.process(args[0]);
 	}
@@ -40,6 +40,7 @@ public class CheckPackageStatus {
 
 	private void dumpRecords(Map<String, Set<String>> statusMap) {
 		Set<String> errorPackages = statusMap.get("BP: 2, BG: 4");
+//		Set<String> errorPackages = statusMap.get("BP: 1, BG: null");
 		if (errorPackages != null) {
 			for (String packageId : errorPackages) {
 				logger.info(packageId);

@@ -80,36 +80,49 @@ public class ReplayUnmanifested {
 		return uspsPostage;
 	}
 
-	private void process() throws IOException, InterruptedException, SQLException, ParseException, DatatypeConfigurationException {
+	private void process() throws IOException, SQLException, ParseException, DatatypeConfigurationException, InterruptedException {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext-evs.xml");
 		postageTransactionMessageConverter = (UspsPostageTransactionMessageConverter)applicationContext.getBean("uspsPostageTransactionMessageConverter");
 		publisherThreadFactory = (PublisherThreadFactory)applicationContext.getBean("publisherThreadFactory");
 		edwDao = (EDWDao)applicationContext.getBean("edwDao");
 
 		PostalPackage postalPackage;
-		Map<String, XMLGregorianCalendar> packageIds = readPackageIdAndScanDate("/Support/2016.10.11/replayUnmanifested.txt");
+		Map<String, XMLGregorianCalendar> packageIds = readPackageIdAndScanDate("/Support/2019-03-14/2019-04-02-Replay/replayUnmanifested.txt");
 
 		if (justLog) {
 			logger.info("WILL NOT PUBLISH - JUST SEND MESSAGES TO LOG SET!!!");
 		}
 		logger.info(packageIds.size() + " records to process...");
-		List<String> releasedPackages = edwDao.getReleasedPackages(packageIds.keySet());
-		logger.info(releasedPackages.size() + " records already released...");
-		dumpToFile("/Support/2016.10.11/alreadyReleased.txt", releasedPackages);
-		packageIds = removeReleased(packageIds, releasedPackages);
+//		List<String> releasedPackages = edwDao.getReleasedPackages(packageIds.keySet());
+//		logger.info(releasedPackages.size() + " records already released...");
+//		dumpToFile("/Support/2019.03.14/2019-04-02-Replay/alreadyReleased.txt", releasedPackages);
+		List<String> packageIdsFromFile = MiscUtil.retreivePackageIdRecordsFromFile("/Support/2019-03-14/2019-04-02-Replay/Status1_packages.txt");
+//		packageIds = removeReleased(packageIds, releasedPackages);
+		packageIds = removeMissingPackageIds(packageIds, packageIdsFromFile);
 		logger.info(packageIds.size() + " records left to process...");
-		dumpToFile("/Support/2016.10.11/tuSentToRodes.txt", packageIds.keySet());
-//		setupThreads(5);
-//		for (String packageId : packageIds.keySet()) {
-//			postalPackage = new PostalPackage();
-//			postalPackage.setParcelId(packageId);
-//			messageContext.addToList(new Message(null, null, postalPackage.getParcelId(),
-//												 postageTransactionMessageConverter.createPostageTransactionMessage(convertToUsps(postalPackage, packageIds.get(packageId)))));
-//		}
-//		logger.info("Send EOM sequence to threads...");
-//		messageContext.completeBatch();
-//		logger.info("Waiting for threads to complete...");
-//		stopThreads();
+		dumpToFile("/Support/2019-03-14/2019-04-02-Replay/tuSentToRodes.txt", packageIds.keySet());
+		setupThreads(5);
+		for (String packageId : packageIds.keySet()) {
+			postalPackage = new PostalPackage();
+			postalPackage.setParcelId(packageId);
+			messageContext.addToList(new Message(null, null, postalPackage.getParcelId(),
+												 postageTransactionMessageConverter.createPostageTransactionMessage(convertToUsps(postalPackage, packageIds.get(packageId)))));
+		}
+		logger.info("Send EOM sequence to threads...");
+		messageContext.completeBatch();
+		logger.info("Waiting for threads to complete...");
+		stopThreads();
+	}
+
+	private Map<String, XMLGregorianCalendar> removeMissingPackageIds(Map<String, XMLGregorianCalendar> packageIds, List<String> packageIdsFromFile) {
+		Map<String, XMLGregorianCalendar> scrubbed = new HashMap<>();
+
+		for (String packageId : packageIdsFromFile) {
+			if (packageIds.containsKey(packageId)) {
+				scrubbed.put(packageId, packageIds.get(packageId));
+			}
+		}
+		return scrubbed;
 	}
 
 	private static void dumpToFile(String filename, Collection<String> packageIdList) {
@@ -170,7 +183,7 @@ public class ReplayUnmanifested {
 		return packageIds;
 	}
 
-	public static void main(String[] args) throws IOException, InterruptedException, SQLException, ParseException, DatatypeConfigurationException {
+	public static void main(String[] args) throws IOException, SQLException, ParseException, DatatypeConfigurationException, InterruptedException {
 		ReplayUnmanifested replayUnmanifested = new ReplayUnmanifested(true);
 		replayUnmanifested.process();
 	}

@@ -1,9 +1,11 @@
 package com.fedex.smartpost.utilities.rodes;
 
 import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
 import com.fedex.smartpost.utilities.rodes.factory.PublisherThreadFactory;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
+import com.fedex.smartpost.utilities.rodes.model.Instance;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import com.fedex.smartpost.utilities.rodes.model.TransferContext;
 import org.apache.commons.logging.Log;
@@ -32,12 +34,14 @@ public class PublishFile {
 	private List<Thread> messageThreadList = new ArrayList<>();
 	private BillingPackageDao billingPackageDao;
 	private PublisherThreadFactory publisherThreadFactory;
+	private EDWDao edwDao;
 	private boolean justLog;
 
 	public PublishFile(boolean publish) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		billingPackageDao = (BillingPackageDao)context.getBean("billingPackageDao");
 		publisherThreadFactory = (PublisherThreadFactory)context.getBean("publisherThreadFactory");
+		edwDao = (EDWDao)context.getBean("edwDao");
 		justLog = !publish;
 	}
 
@@ -84,7 +88,8 @@ public class PublishFile {
 			packageIds.add(message.getPackageId());
 		}
 //		Set<String> existingPackageIds = getExistingPackages(packageIds);
-		Set<String> existingPackageIds = new HashSet<>();
+//		Set<String> existingPackageIds = new HashSet<>();
+		Set<String> existingPackageIds = extractPackageIds(edwDao.retrieveReleasedPackages(new ArrayList<>(packageIds)));
 		logger.info("Package Ids that already exist in BILLING_PACKAGE: " + existingPackageIds.size());
 		processMessages(messages, existingPackageIds);
 		messageContext.completeBatch();
@@ -94,6 +99,14 @@ public class PublishFile {
 		catch (InterruptedException e) {
 			logger.info("Threads abruptly stopped!", e);
 		}
+	}
+
+	private Set<String> extractPackageIds(List<Instance> packageInstances) {
+		Set<String> packageIds = new TreeSet<>();
+		for (Instance instance : packageInstances) {
+			packageIds.add(instance.getPackageId());
+		}
+		return packageIds;
 	}
 
 	private void processMessages(Collection<Message> messages, Set<String> existingPackageIds) throws IOException {
@@ -138,8 +151,8 @@ public class PublishFile {
 		// by RODeS downstream processes.
 		if (args.length != 3) {
 			args = new String[3];
-			args[0] = "/Support/ToBeReplayed-2019.04.03.rec";
-			args[1] = "2";
+			args[0] = "/Support/2019-Feb-Replay/2019-04-05/ToBeReplayed.rec";
+			args[1] = "5";
 			args[2] = "SS"; // SS or OC
 		}
 		PublishFile publishFile = new PublishFile(true);
