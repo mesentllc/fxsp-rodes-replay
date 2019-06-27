@@ -23,4 +23,13 @@ public enum BillingServiceCode {
 		}
 		throw new RuntimeException(serviceCode + " is an invalid code.");
 	}
+
+	public static int getServiceCode(String mailClass) {
+		for (BillingServiceCode bsc : BillingServiceCode.values()) {
+			if (bsc.mailClass.equals(mailClass)) {
+				return bsc.serviceCode;
+			}
+		}
+		throw new RuntimeException(mailClass + " is an invalid mail class.");
+	}
 }

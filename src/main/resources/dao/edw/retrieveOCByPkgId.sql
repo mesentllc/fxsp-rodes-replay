@@ -8,7 +8,9 @@ select pf.unvsl_pkg_nbr, pkg_barcd_nbr,
 	   case when actl_lth_in_qty is null then cust_lth_in_qty else actl_lth_in_qty end as pkg_lth_qty,
 	   case when actl_width_in_qty is null then cust_width_in_qty else actl_width_in_qty end as pkg_width_qty,
        case when actl_hgt_in_qty is null then cust_hgt_in_qty else actl_hgt_in_qty end as pkg_hgt_qty,
-	   'WP999999999999'  as cntnr_nm, ord_cr_tz_tmstp as mindate,'G' as wgt_src_cd,
+	   'WP999999999999'  as cntnr_nm,
+	   case when ord_cr_tz_tmstp is null then pf.db_load_dt_tmstp else ord_cr_tz_tmstp end as mindate,
+	   'G' as wgt_src_cd,
        ord_crt_mnfst_grp_id_nbr, ord_cr_cust_mtnfst_nm, ord_cr_meter_nbr, ord_cr_blng_ref_nbr, ord_cr_po_nbr, shpr_acct_nbr
 from smartpost_prod_view_db.fxsp_f_package pf
 JOIN smartpost_prod_view_db.fxsp_alternate_pkg_key k ON pf.unvsl_pkg_nbr = k.unvsl_pkg_nbr AND alter_pkg_key_cd like 'POSTALDC9%'

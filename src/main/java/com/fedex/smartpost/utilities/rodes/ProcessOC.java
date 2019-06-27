@@ -44,13 +44,13 @@ public class ProcessOC {
 
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
-//			List<Long> upnList = MiscUtil.retreiveUPNsFromFile(filename);
-			List<String> packageList = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
-			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageList);
+			List<Long> upnList = MiscUtil.retreiveUPNsFromFile(filename);
+//			List<String> packageList = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+//			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageList);
 //			MiscUtil.removeDups(packageList, dups);
 			if (useSPEeDSTable) {
-				edwResults = edwDao.retrieveOCByPackageIds(packageList);
-//				edwResults = edwDao.retrieveOCByUPNs(upnList);
+//				edwResults = edwDao.retrieveOCByPackageIds(packageList);
+				edwResults = edwDao.retrieveOCByUPNs(upnList);
 			}
 //			else {
 //				edwResults = edwDao.retrieveEDWResultOCByPackageIds(packageList);
@@ -98,7 +98,7 @@ public class ProcessOC {
 	private static void buildFile(EDWResults edwResults) throws IOException {
 		int processed = 0;
 
-		String filename = "/Support/Kienast/onePkgId.rec";
+		String filename = "/Support/Kienast/allUpns.rec";
 //		String filename = "/Support/SortVsRated/OC-without.rec";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
 		for (Date date : edwResults.getScanDates()) {
@@ -164,7 +164,7 @@ public class ProcessOC {
 
 		if (args.length == 0) {
 			filenames = new ArrayList<>();
-			filenames.add("/Support/Kienast/onePkgId.txt");
+			filenames.add("/Support/Kienast/allUpns.txt");
 //			filenames.add("/Support/EVS_Unmanifested/02.2016/replay-2016-02.txt");
 		}
 		else {

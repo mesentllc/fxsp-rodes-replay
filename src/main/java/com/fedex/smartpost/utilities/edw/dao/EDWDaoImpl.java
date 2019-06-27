@@ -573,7 +573,7 @@ public class EDWDaoImpl implements EDWDao {
 		return dest_sort_cd;
 	}
 
-	private String getMailClass(ResultSet rs) throws SQLException {
+	private String getMailClass(ResultSet rs) {
 		int serviceCode = 0;
 
 		try {
@@ -585,7 +585,9 @@ public class EDWDaoImpl implements EDWDao {
 		if (serviceCode > 0) {
 			return BillingServiceCode.getMailClass(serviceCode);
 		}
-		return rs.getString("mail_class_cd") + rs.getString("mail_sub_class_cd");
+		return null;
+		// Getting issues with unknown mail classes when the aervice code doesn't exist.
+		// return rs.getString("mail_class_cd") + rs.getString("mail_sub_class_cd");
 	}
 
 	private void populateOCFields(Shipment shipment, ResultSet rs) throws SQLException {
@@ -595,7 +597,7 @@ public class EDWDaoImpl implements EDWDao {
 		shipment.getPackage().setMailerId(fxspPackage.getMailerId());
 		shipment.getPackage().setCustomerPackageId(rs.getString("ord_cr_blng_ref_nbr"));
 		shipment.getPackage().getUsPostal().setDeliveryConfirmationRequired(true);
-		shipment.getPackage().setFxgServiceCode(rs.getInt("blng_svc_cd"));
+		shipment.getPackage().setFxgServiceCode(rs.getInt("blng_svc_cd") == 0 ? 913 : rs.getInt("blng_svc_cd"));
 		shipment.setShipping(new Shipping());
 		shipment.getShipping().setCustomerManifestId(rs.getString("ord_cr_cust_mtnfst_nm"));
 		shipment.getShipping().setMeterNumber(rs.getString("ord_cr_meter_nbr"));
