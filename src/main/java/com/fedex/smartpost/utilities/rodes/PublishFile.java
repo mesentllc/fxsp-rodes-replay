@@ -51,11 +51,15 @@ public class PublishFile {
 		messageThreadList = new ArrayList<>(threadCount);
 		for (int index = 0; index < threadCount; index++) {
 			Thread thread = null;
-			if ("SS".equals(msgType)) {
-				thread = publisherThreadFactory.createBean(index, messageQueue, justLog);
-			}
-			if ("OC".equals(msgType)) {
-				thread = publisherThreadFactory.createOCBean(index, messageQueue, justLog);
+			switch (msgType) {
+				case "SS":
+					thread = publisherThreadFactory.createBean(index, messageQueue, justLog);
+					break;
+				case "OC":
+					thread = publisherThreadFactory.createOCBean(index, messageQueue, justLog);
+					break;
+				case "PD":
+					thread = publisherThreadFactory.createPDBean(index, messageQueue, justLog);
 			}
 			if (thread != null) {
 				thread.start();
@@ -63,6 +67,7 @@ public class PublishFile {
 			}
 			else {
 				logger.info("Unknown publisher type [" + msgType + "].");
+				break;
 			}
 		}
 	}
@@ -151,9 +156,9 @@ public class PublishFile {
 		// by RODeS downstream processes.
 		if (args.length != 3) {
 			args = new String[3];
-			args[0] = "/Support/2019-Feb-Replay/2019-04-05/ToBeReplayed.rec";
-			args[1] = "5";
-			args[2] = "SS"; // SS or OC
+			args[0] = "/Support/Kienast/onePkgId.rec";
+			args[1] = "1";
+			args[2] = "SS"; // SS, OC or PD
 		}
 		PublishFile publishFile = new PublishFile(true);
 		publishFile.process(args[0], Integer.parseInt(args[1]), args[2]);

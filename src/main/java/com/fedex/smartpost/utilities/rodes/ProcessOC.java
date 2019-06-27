@@ -39,25 +39,27 @@ public class ProcessOC {
 	}
 
 	private void process(List<String> filenames, boolean useSPEeDSTable) throws IOException {
-		EDWResults edwResults;
+		EDWResults edwResults = null;
 //		Map<Long, String> shareMap = buildShareMap();
 
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
-			List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
-			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
-			MiscUtil.removeDups(packageIds, dups);
+//			List<Long> upnList = MiscUtil.retreiveUPNsFromFile(filename);
+			List<String> packageList = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageList);
+//			MiscUtil.removeDups(packageList, dups);
 			if (useSPEeDSTable) {
-				edwResults = edwDao.retrieveOCByPackageIds(packageIds);
+				edwResults = edwDao.retrieveOCByPackageIds(packageList);
+//				edwResults = edwDao.retrieveOCByUPNs(upnList);
 			}
-			else {
-				edwResults = edwDao.retrieveEDWResultOCByPackageIds(packageIds);
-			}
+//			else {
+//				edwResults = edwDao.retrieveEDWResultOCByPackageIds(packageList);
+//			}
 			logger.info("Total order create records extracted: " + edwResults.totalRecords());
 			logger.info("Total scan dates: " + edwResults.getScanDates().size());
 			logger.info("Scan Dates: " + buildScanDateString(edwResults));
 			buildFile(edwResults);
-//			billingPackageDao.retrieveDups(packageIds);
+//			billingPackageDao.retrieveDups(packageList);
 		}
 	}
 
@@ -96,7 +98,7 @@ public class ProcessOC {
 	private static void buildFile(EDWResults edwResults) throws IOException {
 		int processed = 0;
 
-		String filename = "/Support/2019-Feb-Replay/EPDI_Feb.rec";
+		String filename = "/Support/Kienast/onePkgId.rec";
 //		String filename = "/Support/SortVsRated/OC-without.rec";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
 		for (Date date : edwResults.getScanDates()) {
@@ -162,7 +164,7 @@ public class ProcessOC {
 
 		if (args.length == 0) {
 			filenames = new ArrayList<>();
-			filenames.add("/Support/2019-Feb-Replay/packageIds.txt");
+			filenames.add("/Support/Kienast/onePkgId.txt");
 //			filenames.add("/Support/EVS_Unmanifested/02.2016/replay-2016-02.txt");
 		}
 		else {

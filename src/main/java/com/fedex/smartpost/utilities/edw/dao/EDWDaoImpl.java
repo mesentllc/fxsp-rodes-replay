@@ -2,6 +2,10 @@ package com.fedex.smartpost.utilities.edw.dao;
 
 import com.fedex.smartpost.common.business.FxspPackage;
 import com.fedex.smartpost.common.business.FxspPackageFactory;
+import com.fedex.smartpost.common.types.BillingInformation;
+import com.fedex.smartpost.common.types.BillingPayorType;
+import com.fedex.smartpost.common.types.CustomerInformation;
+import com.fedex.smartpost.common.types.DeliveryEvent;
 import com.fedex.smartpost.common.types.MailClass;
 import com.fedex.smartpost.common.types.MailSubClass;
 import com.fedex.smartpost.common.types.MeasurementSource;
@@ -458,6 +462,7 @@ public class EDWDaoImpl implements EDWDao {
 									 rs.getBigDecimal("pkg_width_qty"), rs.getBigDecimal("pkg_hgt_qty"),
 									 rs.getString("wgt_src_cd"), rs.getString("wgt_src_cd"), fxspPackage.isImpb());
 					populateOCFields(shipment, rs);
+					populatePDFields(shipment, rs);
 					payload = encodeObject(shipment);
 					if ((payload != null) && (payload.length() > 0)) {
 						edwResults.addMessage(rs.getTimestamp("mindate"), new Message(rs.getLong("unvsl_pkg_nbr"), rs.getTimestamp("mindate"),
@@ -484,6 +489,83 @@ public class EDWDaoImpl implements EDWDao {
 		return edwResults;
 	}
 
+	@Override
+	public EDWResults retrieveOCByUPNs(List<Long> upnList) {
+		EDWResults edwResults = new EDWResults();
+		FxspPackage fxspPackage;
+		Connection conn;
+		Statement stmt;
+		ResultSet rs;
+		Shipment tempShipment;
+		int packageCount = 0;
+		int batchCount = 0;
+
+		try {
+			DriverManager.registerDriver(new TeraDriver());
+			conn = dataSource.getConnection();
+			stmt = conn.createStatement();
+			tempShipment = getStarterShipment();
+			final Shipment shipment = tempShipment;
+			stmt.execute(CREATE_VOLATILE_UPN_TABLE);
+			PreparedStatement ps = conn.prepareStatement("insert into upnTable (?)");
+			for (Long item : upnList) {
+				if ((++batchCount % 5000) == 0) {
+					ps.executeBatch();
+				}
+				ps.setLong(1, item);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+			ps.close();
+			rs = stmt.executeQuery(GET_ORDER_CREATES_BY_UPN);
+//			rs = stmt.executeQuery(GET_SHIPMENTS_USING_F_PACKAGE);
+			while (rs.next()) {
+				String payload;
+				String packageId = rs.getString("pkg_barcd_nbr");
+				try {
+					fxspPackage = FxspPackageFactory.createFromTrackingId(packageId);
+					populateShipment(shipment, packageId, getMailClass(rs),
+						rs.getString("prcs_size_cd"), rs.getString("prcs_ctgy_cd"), rs.getString("cntnr_nm"),
+						safeTrim(rs.getString("dest_sort_cd")), rs.getTimestamp("mindate"), rs.getInt("hub_cd"),
+						rs.getBigDecimal("pkg_wgt"), rs.getBigDecimal("pkg_lth_qty"),
+						rs.getBigDecimal("pkg_width_qty"), rs.getBigDecimal("pkg_hgt_qty"),
+						rs.getString("wgt_src_cd"), rs.getString("wgt_src_cd"), fxspPackage.isImpb());
+					populateOCFields(shipment, rs);
+					populatePDFields(shipment, rs);
+					payload = encodeObject(shipment);
+					if ((payload != null) && (payload.length() > 0)) {
+						edwResults.addMessage(rs.getTimestamp("mindate"), new Message(rs.getLong("unvsl_pkg_nbr"), rs.getTimestamp("mindate"),
+							packageId, payload));
+						if ((++packageCount % 100) == 0) {
+							logger.debug("Processed " + packageCount + " records.");
+						}
+					}
+				}
+				catch (Exception e) {
+					logger.error("Error with package Id: " + packageId + " - (UPN: " +
+					             rs.getLong("unvsl_pkg_nbr") + ") " + e.getMessage());
+				}
+			}
+			logger.debug("Processed " + packageCount + " records total.");
+			rs.close();
+			stmt.execute(DROP_VOLATILE_UPN_TABLE);
+			stmt.close();
+			conn.close();
+		}
+		catch (Exception e) {
+			logger.error("Setup Error: " + e.getMessage());
+		}
+		return edwResults;
+	}
+
+	private void populatePDFields(Shipment shipment, ResultSet rs) throws SQLException {
+		DeliveryEvent deliveryEvent = new DeliveryEvent();
+		deliveryEvent.setEventDateTime(getXmlDate(rs.getTimestamp("mindate")));
+		deliveryEvent.setCode1("01");
+		deliveryEvent.setPostalCode(safeTrim(rs.getString("dest_sort_cd")));
+		shipment.setDeliveryEvent(deliveryEvent);
+	}
+
 	private String safeTrim(String dest_sort_cd) {
 		if (dest_sort_cd != null) {
 			return dest_sort_cd.trim();
@@ -507,13 +589,24 @@ public class EDWDaoImpl implements EDWDao {
 	}
 
 	private void populateOCFields(Shipment shipment, ResultSet rs) throws SQLException {
+		// Override the SS hub id, to distinguish b/w ORIG/DEST
+		shipment.getPackage().getSortationInformation().getLocation().setHubId(rs.getInt("dest_loc_nbr"));
+		FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(shipment.getPackage().getPackageId());
+		shipment.getPackage().setMailerId(fxspPackage.getMailerId());
+		shipment.getPackage().setCustomerPackageId(rs.getString("ord_cr_blng_ref_nbr"));
+		shipment.getPackage().getUsPostal().setDeliveryConfirmationRequired(true);
+		shipment.getPackage().setFxgServiceCode(rs.getInt("blng_svc_cd"));
 		shipment.setShipping(new Shipping());
-		shipment.getShipping().setCustomerManifestId(rs.getString("ord_crt_mnfst_grp_id_nbr"));
-		shipment.getShipping().setManifestGroupText(rs.getString("ord_cr_cust_mtnfst_nm"));
+		shipment.getShipping().setCustomerManifestId(rs.getString("ord_cr_cust_mtnfst_nm"));
 		shipment.getShipping().setMeterNumber(rs.getString("ord_cr_meter_nbr"));
+		shipment.getShipping().setHubId(rs.getInt("hub_cd"));
+		shipment.getShipping().setCustomerDistributionCenter("1");
 		shipment.getPackage().setPackageAttributes(new PackageAttributes());
 		shipment.getPackage().getPackageAttributes().setBillingReferenceNumber(rs.getString("ord_cr_blng_ref_nbr"));
 		shipment.getPackage().getPackageAttributes().setPurchaseOrderNumber(rs.getString("ord_cr_po_nbr"));
+		shipment.setBillingInformation(new BillingInformation());
+		shipment.getBillingInformation().setAccountNumber(rs.getString("shpr_acct_nbr"));
+		shipment.getBillingInformation().setPayorType(BillingPayorType.SENDER);
 	}
 
 	@Override

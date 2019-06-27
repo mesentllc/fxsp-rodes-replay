@@ -9,28 +9,52 @@
 
 	<!-- Connection Factory -->
 	<bean id="connectionFactory" class="com.fedex.smartpost.common.jms.RetryingConnectionFactoryDecorator">
-		<constructor-arg ref="cachingConnectionFactory" />
+		<constructor-arg>
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <property name="targetConnectionFactory">
+                    <bean class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+                        <property name="targetConnectionFactory">
+                            <jee:jndi-lookup jndi-name="fxClientUID=VS.FXSPSHIP.MOVEMENT.QCF">
+                                <jee:environment>
+                                    java.naming.provider.url=ldap://appldap.prod.fedex.com:389/ou=messaging,dc=prod,dc=fedex,dc=com
+                                    java.naming.factory.initial=com.fedex.mi.decorator.jms.FedexTibcoInitialContext
+                                </jee:environment>
+                            </jee:jndi-lookup>
+                        </property>
+                        <property name="username" value="fxsp_drs" />
+                        <property name="password" value="fxsp_drs" />
+                    </bean>
+                </property>
+                <property name="sessionCacheSize" value="70" />
+            </bean>
+        </constructor-arg>
 		<property name="connectionRetryTimeout" value="5000" />
 		<property name="maxConnectionAttempts" value="5" />
 	</bean>
 
-	<bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory" ref="publisherForeignCF" />
-		<property name="sessionCacheSize" value="70" />
-	</bean>
-
-	<bean id="publisherForeignCF" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-		<property name="targetConnectionFactory" ref="jndiLdapLookupConnectionFactory" />
-		<property name="username" value="fxsp_drs" />
-		<property name="password" value="fxsp_drs" />
-	</bean>
-
-	<jee:jndi-lookup id="jndiLdapLookupConnectionFactory" jndi-name="fxClientUID=VS.FXSPSHIP.MOVEMENT.QCF">
-		<jee:environment>
-			java.naming.provider.url=ldap://appldap.prod.fedex.com:389/ou=messaging,dc=prod,dc=fedex,dc=com
-			java.naming.factory.initial=com.fedex.mi.decorator.jms.FedexTibcoInitialContext
-		</jee:environment>
-	</jee:jndi-lookup>
+    <bean id="pdConnectionFactory" class="com.fedex.smartpost.common.jms.RetryingConnectionFactoryDecorator">
+        <constructor-arg>
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <property name="targetConnectionFactory">
+                    <bean class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+                        <property name="targetConnectionFactory">
+                            <jee:jndi-lookup id="pdJndiLdapLookupConnectionFactory" jndi-name="fxClientUID=VS.FXSPSHIP.DELIVERY.POSTAL.QCF">
+                                <jee:environment>
+                                    java.naming.provider.url=ldap://appldap.prod.fedex.com:389/ou=messaging,dc=prod,dc=fedex,dc=com
+                                    java.naming.factory.initial=com.fedex.mi.decorator.jms.FedexTibcoInitialContext
+                                </jee:environment>
+                            </jee:jndi-lookup>
+                        </property>
+                        <property name="username" value="fxsp_drs" />
+                        <property name="password" value="fxsp_drs" />
+                    </bean>
+                </property>
+                <property name="sessionCacheSize" value="70" />
+            </bean>
+        </constructor-arg>
+        <property name="connectionRetryTimeout" value="5000" />
+        <property name="maxConnectionAttempts" value="5" />
+    </bean>
 
 	<bean id="domesticPublisher" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="connectionFactory" />
@@ -49,6 +73,15 @@
 		<property name="sessionTransacted" value="true" />
 		<property name="destinationResolver" ref="jndiDestinationResolver" />
 	</bean>
+
+    <bean id="domPdPublisher" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="pdConnectionFactory" />
+        <property name="defaultDestinationName" value="FXSPSHIP.DELIVERY.POSTAL.RATING_6895" />
+        <property name="messageConverter" ><null /></property>
+        <property name="pubSubDomain" value="false" />
+        <property name="sessionTransacted" value="true" />
+        <property name="destinationResolver" ref="jndiDestinationResolver" />
+    </bean>
 
 	<bean id="jndiDestinationResolver" class="org.springframework.jms.support.destination.JndiDestinationResolver">
 		<property name="fallbackToDynamicDestination" value="true" />

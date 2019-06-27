@@ -9,5 +9,6 @@ import java.util.concurrent.BlockingQueue;
 
 public interface PublisherThreadFactory extends ApplicationContextAware {
 	PublishThread createBean(int threadNumber, final BlockingQueue<List<Message>> messageStringQueue, boolean justLog);
-	PublishThread createOCBean(int threadNumber, BlockingQueue<List<Message>> messageStringQueue, boolean justLog);
+	PublishThread createOCBean(int threadNumber, final BlockingQueue<List<Message>> messageStringQueue, boolean justLog);
+	PublishThread createPDBean(int threadNumber, final BlockingQueue<List<Message>> messageStringQueue, boolean justLog);
 }

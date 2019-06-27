@@ -21,6 +21,7 @@ public interface EDWDao {
 	String SELECT_UNRELEASED_UPN_FROM_RRR = ClassPathResourceUtil.getString("/dao/edw/retrieveUnlreasedUpns.sql");
 	String GET_RELEASED_PACKAGES_FROM_RRR = ClassPathResourceUtil.getString("/dao/edw/retrieveRoRelPackagesFromRRR.sql");
 	String GET_ORDER_CREATES_BY_PACKAGES = ClassPathResourceUtil.getString("/dao/edw/retrieveOCByPkgId.sql");
+	String GET_ORDER_CREATES_BY_UPN = ClassPathResourceUtil.getString("/dao/edw/retrieveOCByUPN.sql");
 	String GET_EDW_ORDER_CREATE_BY_PACKAGES = ClassPathResourceUtil.getString("/dao/edw/retrieveEDWOCByPkgIds.sql");
 	String GET_POSTAL_CODE_BY_SHARE = ClassPathResourceUtil.getString("/dao/edw/retrievePostalCodeBySHARE.sql");
 	String GET_PACKAGES_FOR_REPLAY = ClassPathResourceUtil.getString("/dao/edw/straightExtractForReplay.sql");
@@ -37,6 +38,7 @@ public interface EDWDao {
 	Set<Long> retrieveUnreleasedUPNs(Set<Long> upnSet);
 	List<String> getReleasedPackages(Set<String> packageList) throws SQLException;
 	EDWResults retrieveOCByPackageIds(List<String> packageList);
+	EDWResults retrieveOCByUPNs(List<Long> upnList);
 	List<EDWDataRecord> retrieveEDWOCByPackageIds(List<String> packageList);
 	EDWResults retrieveEDWResultOCByPackageIds(List<String> packageList);
 	Map<String, String> retrieveSHAREInformation(Map<Long, String> shareMap);

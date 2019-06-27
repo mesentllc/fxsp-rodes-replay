@@ -33,7 +33,7 @@ public class BuildMessageFileFromUPNs {
 			args = new String[1];
 			// This file was created from the CreateUPNList method
 			// args[0] = "/unreleased.txt";
-			args[0] = "/Support/2017.01.25/2017.01.25-upn.txt";
+			args[0] = "/Support/Kienast/upns.txt";
 		}
 		BuildMessageFileFromUPNs buildMessageFileFromUPNs = new BuildMessageFileFromUPNs();
 		buildMessageFileFromUPNs.processUPNsUsingPackageFact(args[0]);

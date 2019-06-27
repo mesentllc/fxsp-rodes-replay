@@ -13,6 +13,7 @@ public class PublisherThreadFactoryImpl implements PublisherThreadFactory {
 	private JmsTemplate domesticPublisher;
 	private JmsTemplate returnsPublisher;
 	private JmsTemplate ocPublisher;
+	private JmsTemplate domPdPublisher;
 
 	@Override
 	public PublishThread createBean(int threadNumber, BlockingQueue<List<Message>> messageStringQueue, boolean justLog) {
@@ -25,9 +26,15 @@ public class PublisherThreadFactoryImpl implements PublisherThreadFactory {
 	}
 
 	@Override
+	public PublishThread createPDBean(int threadNumber, BlockingQueue<List<Message>> messageStringQueue, boolean justLog) {
+		return new PublishThread(threadNumber, messageStringQueue, domPdPublisher, null, "POSTALDEL", justLog);
+	}
+
+	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		domesticPublisher = (JmsTemplate)applicationContext.getBean("domesticPublisher");
 		returnsPublisher = (JmsTemplate)applicationContext.getBean("returnsPublisher");
 		ocPublisher = (JmsTemplate)applicationContext.getBean("ocPublisher");
+		domPdPublisher = (JmsTemplate)applicationContext.getBean("domPdPublisher");
 	}
 }

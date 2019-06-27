@@ -58,10 +58,10 @@ public class CheckProposedFile {
 			else {
 				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
 //				dumpUnreleased(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
-//				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
-				edwDao.retrieveReleasedPackages(packageIds);
+				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
+//				edwDao.retrieveReleasedPackages(packageIds);
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
-//				dumpIds(dups);
+				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
 //				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 //				packageDao.retrievePackages(packageIds);
@@ -116,7 +116,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/2019-Feb-Replay/packageIds.txt");
+			filenames.add("/Support/RFS423046/packageIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

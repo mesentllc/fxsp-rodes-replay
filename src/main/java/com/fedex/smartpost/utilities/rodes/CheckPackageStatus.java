@@ -16,7 +16,7 @@ public class CheckPackageStatus {
 	private BillingPackageDao billingPackageDao;
 
 	public CheckPackageStatus() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		billingPackageDao = (BillingPackageDao)context.getBean("billingPackageDao");
 	}
 
@@ -24,7 +24,7 @@ public class CheckPackageStatus {
 		CheckPackageStatus checkPackageStatus = new CheckPackageStatus();
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "/Support/2019-Feb-Replay/2019-04-05/packageIds.txt";
+			args[0] = "/Support/2019-Feb-Replay/2019-04-12/packageIds.txt";
 		}
 		checkPackageStatus.process(args[0]);
 	}

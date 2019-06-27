@@ -7,31 +7,24 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class VerifyReplay {
 	private static final Log logger = LogFactory.getLog(VerifyReplay.class);
 	private EDWDao edwDao;
 
-	public VerifyReplay() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+	private VerifyReplay() {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		edwDao = (EDWDao)context.getBean("edwDao");
 	}
 
-	private void process(List<String> filenames, boolean saveIt) throws SQLException, IOException {
+	private void process(List<String> filenames) throws SQLException {
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
-			if (saveIt) {
-				new UpdateMasterReplayFile(edwDao, filename);
-			}
-			else {
-				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
-				edwDao.retrieveReleasedPackages(packageIds);
-			}
+			List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+			edwDao.retrieveReleasedPackages(packageIds);
 		}
 		closeConnections();
 	}
@@ -40,17 +33,11 @@ public class VerifyReplay {
 		edwDao.close();
 	}
 
-	public static void main(String[] args) throws SQLException, IOException {
-		List<String> filenames;
+	public static void main(String[] args) throws SQLException {
+		List<String> filenames = new ArrayList<>();
 
-		if (args.length != 1) {
-			filenames = new ArrayList<>();
-			filenames.add("/Support/2019-Jan-Replay/2019-04-04/packageIds.txt");
-		}
-		else {
-			filenames = Arrays.asList(args);
-		}
+		filenames.add("/Support/2019-Feb-Replay/2019-04-11/packageIds.txt");
 		VerifyReplay verifyReplay = new VerifyReplay();
-		verifyReplay.process(filenames, false);
+		verifyReplay.process(filenames);
 	}
 }

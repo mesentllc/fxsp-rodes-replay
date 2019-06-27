@@ -15,4 +15,4 @@ JOIN smartpost_prod_view_db.fxsp_alternate_pkg_key k ON pf.unvsl_pkg_nbr = k.unv
 join smartpost_prod_view_db.fxsp_usps_mail_class u on u.mail_class_id_nbr = pf.mail_class_id_nbr
 join smartpost_prod_view_db.fxsp_d_location l on l.loc_id_nbr = pf.ord_cr_exp_orig_hub_id_nbr
 WHERE k.pkg_barcd_nbr in (SELECT * FROM PACKAGES)
-QUALIFY ROW_NUMBER() OVER(PARTITION BY k.pkg_barcd_nbr ORDER BY pf.unvsl_pkg_nbr DESC)=1;
+QUALIFY ROW_NUMBER() OVER(PARTITION BY k.pkg_barcd_nbr ORDER BY ord_cr_blng_ref_nbr DESC)=1;
