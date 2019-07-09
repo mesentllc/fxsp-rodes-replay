@@ -79,12 +79,19 @@ public class ExtractMessagesFromRecMaster {
 	public static void main(String[] args) throws IOException, ParseException {
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "2019-02-26, 2019-02-27, 2019-02-28, 2019-03-01, 2019-03-02, " +
-			          "2019-03-03, 2019-03-06";
-//			args[0] = null;
+			args[0] = "2019-04-30, 2019-05-01, 2019-05-02, 2019-05-03, 2019-05-04, " +
+			          "2019-05-05, 2019-05-06, 2019-05-07, 2019-05-08, 2019-05-09, " +
+			          "2019-05-10, 2019-05-11, 2019-05-12, 2019-05-13, 2019-05-14";
+//			args[0] = "2019-05-15, 2019-05-16, 2019-05-17, 2019-05-18, 2019-05-19, " +
+//			          "2019-05-20, 2019-05-21, 2019-05-22, 2019-05-23, 2019-05-24, " +
+//			          "2019-05-25, 2019-05-26, 2019-05-27, 2019-05-28, 2019-05-29";
+//			args[0] = "2019-05-30, 2019-05-31, 2019-06-01, 2019-06-03, 2019-06-05, " +
+//			          "2019-06-06, 2019-06-07, 2019-06-08, 2019-06-10, 2019-06-11";
+//			args[0] = "2019-06-12, 2019-06-14, 2019-06-15, 2019-06-19, 2019-06-21, 2019-06-26";
+// 			args[0] = null;
 		}
 		ExtractMessagesFromRecMaster buildMessageFileFromMaster = new ExtractMessagesFromRecMaster();
 //		buildMessageFileFromMaster.process(args[0], true);
-		buildMessageFileFromMaster.process(args[0], "D:\\Support\\2019-Feb-Replay\\EPDI_Feb.rec");
+		buildMessageFileFromMaster.process(args[0], "/Support/Kienast/allUpns.rec");
 	}
 }

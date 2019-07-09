@@ -80,14 +80,14 @@ public class ReplayUnmanifested {
 		return uspsPostage;
 	}
 
-	private void process() throws IOException, SQLException, ParseException, DatatypeConfigurationException, InterruptedException {
+	private void process() throws IOException, ParseException, DatatypeConfigurationException, InterruptedException {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext-evs.xml");
 		postageTransactionMessageConverter = (UspsPostageTransactionMessageConverter)applicationContext.getBean("uspsPostageTransactionMessageConverter");
 		publisherThreadFactory = (PublisherThreadFactory)applicationContext.getBean("publisherThreadFactory");
 		edwDao = (EDWDao)applicationContext.getBean("edwDao");
 
 		PostalPackage postalPackage;
-		Map<String, XMLGregorianCalendar> packageIds = readPackageIdAndScanDate("/Support/2019-03-14/2019-04-02-Replay/replayUnmanifested.txt");
+		Map<String, XMLGregorianCalendar> packageIds = MiscUtil.readPackageIdAndScanDate("/Support/2019-03-14/2019-04-02-Replay/replayUnmanifested.txt");
 
 		if (justLog) {
 			logger.info("WILL NOT PUBLISH - JUST SEND MESSAGES TO LOG SET!!!");
@@ -148,39 +148,6 @@ public class ReplayUnmanifested {
 			}
 		}
 		return scrubbed;
-	}
-
-	private static Map<String, XMLGregorianCalendar> readPackageIdAndScanDate(String filename) throws IOException, ParseException, DatatypeConfigurationException {
-		Map<String, XMLGregorianCalendar> packageIds = new HashMap<>();
-		BufferedReader br = new BufferedReader(new FileReader(filename));
-		FxspPackage fxspPackage;
-
-		while (br.ready()) {
-			String line = br.readLine().trim();
-			String[] split = line.split("\\|");
-			GregorianCalendar scanDate = new GregorianCalendar();
-			if (split.length > 1) {
-				if ('-' == split[1].charAt(4)) {
-					scanDate.setTime(MiscUtil.SDF.parse(split[1]));
-				}
-				if ('/' == split[1].charAt(2)) {
-					scanDate.setTime(MiscUtil.SDF2.parse(split[1]));
-				}
-			}
-			// If the package ids are mixed with 30-character barcodes, or just want to be sure,
-			// use the FxspPackageFactory... Otherwise if the file contains package ids that have the same
-			// length, you could just truncate... Either way.
-			XMLGregorianCalendar xmlSacnDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(scanDate);
-			try {
-				fxspPackage = FxspPackageFactory.createFromUnknown(split[0]);
-				packageIds.put(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2), xmlSacnDate);
-			}
-			catch (FxspPackageException e) {
-				logger.info("Bad Package", e);
-			}
-		}
-		br.close();
-		return packageIds;
 	}
 
 	public static void main(String[] args) throws IOException, SQLException, ParseException, DatatypeConfigurationException, InterruptedException {

@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class CheckProposedFile {
 	private static final Log logger = LogFactory.getLog(CheckProposedFile.class);
@@ -63,9 +64,9 @@ public class CheckProposedFile {
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
-//				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
+				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 //				packageDao.retrievePackages(packageIds);
-//				packageHistoryDao.retrievePackages(packageIds);
+				packageHistoryDao.retrievePackages(packageIds);
 //				dumpStatuses(unmanifestedPackageDao.getUnmanifestedStatusByPackageId(packageIds));
 			}
 		}
@@ -102,8 +103,37 @@ public class CheckProposedFile {
 	}
 
 	private void dumpIds(List<BillingPackage> billingPackages) {
+		Map<String, List<String>> statusSet = new TreeMap<>();
 		for (BillingPackage billingPackage : billingPackages) {
+			List<String> packages;
+			if (!statusSet.containsKey(billingPackage.getStatus())) {
+				packages = new ArrayList<>();
+				statusSet.put(billingPackage.getStatus(), packages);
+			}
+			else {
+				packages = statusSet.get(billingPackage.getStatus());
+			}
+			packages.add(billingPackage.getFedexPkgId());
+
 			logger.info(billingPackage.getFedexPkgId() + " -> Status: " + billingPackage.getStatus());
+		}
+		for (String status : statusSet.keySet()) {
+			writeFile(status, statusSet.get(status));
+		}
+	}
+
+	private void writeFile(String status, List<String> strings) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(String.format("/Support/Kienast/%s-Status-%s.txt",
+				sdf.format(new Date()), status)));
+			for (String packageId : strings) {
+				bw.write(packageId + "\n");
+			}
+			bw.close();
+		}
+		catch(IOException ioe) {
+			logger.error("Exception: ", ioe);
 		}
 	}
 
@@ -116,7 +146,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/RFS423046/packageIds.txt");
+			filenames.add("/Support/Kienast/20190702-PkgIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

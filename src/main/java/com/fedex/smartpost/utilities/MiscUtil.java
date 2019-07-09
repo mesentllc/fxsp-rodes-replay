@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -502,6 +503,39 @@ public class MiscUtil {
 		while (bufferedReader.ready()) {
 			packageIds.add(bufferedReader.readLine().trim());
 		}
+		return packageIds;
+	}
+
+	public static Map<String, XMLGregorianCalendar> readPackageIdAndScanDate(String filename) throws IOException, ParseException, DatatypeConfigurationException {
+		Map<String, XMLGregorianCalendar> packageIds = new HashMap<>();
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		FxspPackage fxspPackage;
+
+		while (br.ready()) {
+			String line = br.readLine().trim();
+			String[] split = line.split("\\|");
+			GregorianCalendar scanDate = new GregorianCalendar();
+			if (split.length > 1) {
+				if ('-' == split[1].charAt(4)) {
+					scanDate.setTime(MiscUtil.SDF.parse(split[1]));
+				}
+				if ('/' == split[1].charAt(2)) {
+					scanDate.setTime(MiscUtil.SDF2.parse(split[1]));
+				}
+			}
+			// If the package ids are mixed with 30-character barcodes, or just want to be sure,
+			// use the FxspPackageFactory... Otherwise if the file contains package ids that have the same
+			// length, you could just truncate... Either way.
+			XMLGregorianCalendar xmlSacnDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(scanDate);
+			try {
+				fxspPackage = FxspPackageFactory.createFromUnknown(split[0]);
+				packageIds.put(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2), xmlSacnDate);
+			}
+			catch (FxspPackageException e) {
+				logger.info("Bad Package", e);
+			}
+		}
+		br.close();
 		return packageIds;
 	}
 

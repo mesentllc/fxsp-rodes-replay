@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -499,6 +500,7 @@ public class EDWDaoImpl implements EDWDao {
 		Shipment tempShipment;
 		int packageCount = 0;
 		int batchCount = 0;
+		Map<Integer, Long> serviceCodeMap = new TreeMap<>();
 
 		try {
 			DriverManager.registerDriver(new TeraDriver());
@@ -532,6 +534,14 @@ public class EDWDaoImpl implements EDWDao {
 						rs.getString("wgt_src_cd"), rs.getString("wgt_src_cd"), fxspPackage.isImpb());
 					populateOCFields(shipment, rs);
 					populatePDFields(shipment, rs);
+					int key = shipment.getPackage().getFxgServiceCode();
+					if (!serviceCodeMap.containsKey(shipment.getPackage().getFxgServiceCode())) {
+						serviceCodeMap.put(key, 1L);
+					}
+					else {
+						long count = serviceCodeMap.get(key);
+						serviceCodeMap.put(key, count + 1);
+					}
 					payload = encodeObject(shipment);
 					if ((payload != null) && (payload.length() > 0)) {
 						edwResults.addMessage(rs.getTimestamp("mindate"), new Message(rs.getLong("unvsl_pkg_nbr"), rs.getTimestamp("mindate"),
@@ -547,6 +557,9 @@ public class EDWDaoImpl implements EDWDao {
 				}
 			}
 			logger.debug("Processed " + packageCount + " records total.");
+			for (int key : serviceCodeMap.keySet()) {
+				logger.info("Service code: " + key + " had " + serviceCodeMap.get(key) + " records.");
+			}
 			rs.close();
 			stmt.execute(DROP_VOLATILE_UPN_TABLE);
 			stmt.close();
@@ -559,11 +572,14 @@ public class EDWDaoImpl implements EDWDao {
 	}
 
 	private void populatePDFields(Shipment shipment, ResultSet rs) throws SQLException {
-		DeliveryEvent deliveryEvent = new DeliveryEvent();
-		deliveryEvent.setEventDateTime(getXmlDate(rs.getTimestamp("mindate")));
-		deliveryEvent.setCode1("01");
-		deliveryEvent.setPostalCode(safeTrim(rs.getString("dest_sort_cd")));
-		shipment.setDeliveryEvent(deliveryEvent);
+		String postalCode = rs.getString("dest_sort_cd");
+		if (postalCode != null && safeTrim(postalCode).length() > 0) {
+			DeliveryEvent deliveryEvent = new DeliveryEvent();
+			deliveryEvent.setEventDateTime(getXmlDate(rs.getTimestamp("mindate")));
+			deliveryEvent.setCode1("01");
+			deliveryEvent.setPostalCode(safeTrim(postalCode));
+			shipment.setDeliveryEvent(deliveryEvent);
+		}
 	}
 
 	private String safeTrim(String dest_sort_cd) {
