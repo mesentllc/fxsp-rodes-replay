@@ -952,6 +952,51 @@ public class EDWDaoImpl implements EDWDao {
 	}
 
 	@Override
+	public List<String> getPackagesFromSmartPostPackageDetail(List<String> packageList) {
+		List<String> packageIds = new ArrayList<>();
+		Connection conn;
+		Statement stmt;
+		ResultSet rs;
+		int packageCount = 0;
+		int batchCount = 0;
+		int counter = 0;
+
+		try {
+			DriverManager.registerDriver(new TeraDriver());
+			conn = dataSource.getConnection();
+			stmt = conn.createStatement();
+			stmt.execute(CREATE_VOLATILE_TABLE);
+			logger.info("Number of packages to load into temporary EDW Table: " + packageList.size());
+			PreparedStatement ps = conn.prepareStatement("insert into packages (?)");
+			for (String item : packageList) {
+				if ((++batchCount % 5000) == 0) {
+					ps.executeBatch();
+				}
+				ps.setString(1, item);
+				ps.addBatch();
+				counter++;
+			}
+			logger.info("Total packages inserted into temporary EDW Table: " + counter);
+			ps.executeBatch();
+			ps.close();
+			rs = stmt.executeQuery(GET_PACKAGES_USING_SMARTPOST_PACKAGE_DTL);
+			while (rs.next()) {
+				packageIds.add(rs.getString("sp_pkg_trk_nbr"));
+				packageCount++;
+			}
+			logger.info("Number of package ids in SMARTPOST_PACKAGE_DTL [EDW]: " + packageCount);
+			rs.close();
+			stmt.execute(DROP_VOLATILE_TABLE);
+			stmt.close();
+			conn.close();
+		}
+		catch (Exception e) {
+			logger.error("Setup Error: " + e.getMessage());
+		}
+		return packageIds;
+	}
+
+	@Override
 	public Set<Long> retrieveUnreleasedUPNs(Set<Long> upnSet) {
 		Set<Long> unreleasedSet = new TreeSet<>();
 		Connection conn;

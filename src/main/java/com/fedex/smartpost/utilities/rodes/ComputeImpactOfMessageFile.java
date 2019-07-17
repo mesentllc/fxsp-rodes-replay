@@ -65,6 +65,6 @@ public class ComputeImpactOfMessageFile {
 	public static void main(String[] args) throws ParseException {
 		ComputeImpactOfMessageFile computeImpactOfMessageFile = new ComputeImpactOfMessageFile();
 //		computeImpactOfMessageFile.process(false, false);
-		computeImpactOfMessageFile.process("/Support/Kienast/allUpns.rec");
+		computeImpactOfMessageFile.process("/Support/missingPackageIds.rec");
 	}
 }

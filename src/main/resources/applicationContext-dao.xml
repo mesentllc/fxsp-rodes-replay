@@ -24,6 +24,10 @@
 		<constructor-arg ref="oracleDataSource" />
 	</bean>
 
+    <bean id="domesticEventGateway" class="com.fedex.smartpost.utilities.rodes.dao.DomesticEventGatewayImpl">
+        <constructor-arg ref="oracleDataSource" />
+    </bean>
+
 	<bean id="domesticEventStatGateway" class="com.fedex.smartpost.utilities.rodes.dao.DomesticEventStatGatewayImpl">
 		<constructor-arg ref="oracleDataSource" />
 	</bean>
@@ -41,6 +45,10 @@
 	</bean>
 
     <bean id="unmanifestedPackageDao" class="com.fedex.smartpost.utilities.rodes.dao.UnmanifestedPackageDaoImpl">
+        <constructor-arg ref="oracleDataSource" />
+    </bean>
+
+    <bean id="eSmartpostHubXrefDao" class="com.fedex.smartpost.utilities.rodes.dao.ESmartpostHubXrefDaoImpl">
         <constructor-arg ref="oracleDataSource" />
     </bean>
 

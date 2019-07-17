@@ -8,9 +8,11 @@ import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
 import com.fedex.smartpost.utilities.rodes.dao.UnmanifestedPackageDao;
 import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
+import com.fedex.smartpost.utilities.rodes.model.Instance;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import com.fedex.smartpost.utilities.transportation.dao.PackageDao;
 import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
+import com.tibco.security.impl.A.B;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class CheckProposedFile {
 	private static final Log logger = LogFactory.getLog(CheckProposedFile.class);
@@ -59,18 +62,42 @@ public class CheckProposedFile {
 			else {
 				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
 //				dumpUnreleased(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
-				edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds);
-//				edwDao.retrieveReleasedPackages(packageIds);
-				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
-				dumpIds(dups);
+				List<Instance> instances = edwDao.retrieveReleasedPackages(packageIds);
+//				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
+				packageIds = removeDups(packageIds, instances);
+				logger.info("Number of outstanding package ids: " + packageIds.size());
+//				dumpPackageIds(packageIds);
+//				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
-				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
+//				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 //				packageDao.retrievePackages(packageIds);
-				packageHistoryDao.retrievePackages(packageIds);
+//				packageHistoryDao.retrievePackages(packageIds);
 //				dumpStatuses(unmanifestedPackageDao.getUnmanifestedStatusByPackageId(packageIds));
 			}
 		}
 		closeConnections();
+	}
+
+	private void dumpPackageIds(List<String> packageIds) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/missingPackageIds.txt"));
+		for (String packageId : packageIds) {
+			bw.write(packageId + "\n");
+		}
+		bw.close();
+	}
+
+	private List<String> removeDups(List<String> current, List<Instance> instances) {
+		Set<String> fromEDW = new TreeSet<>();
+		List<String> notFoundPackageId = new ArrayList<>();
+		for (Instance instance : instances) {
+			fromEDW.add(instance.getPackageId());
+		}
+		for (String packageId : current) {
+			if (!fromEDW.contains(packageId)) {
+				notFoundPackageId.add(packageId);
+			}
+		}
+		return notFoundPackageId;
 	}
 
 	private void dumpStatuses(Map<String, Set<String>> unmanifestedStatus) {
@@ -92,7 +119,7 @@ public class CheckProposedFile {
 	private void dumpUnreleased(EDWResults edwResults) throws IOException {
 		Date now = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-Feb-Replay/unreleased-" + sdf.format(now) + ".txt"));
+		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/unreleased-" + sdf.format(now) + ".txt"));
 		for (Date scanDate : edwResults.getScanDates()) {
 			List<Message> messageList = edwResults.getMessages(scanDate);
 			for (Message message : messageList) {
@@ -146,7 +173,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/Kienast/20190702-PkgIds.txt");
+			filenames.add("/Support/missingPackageIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

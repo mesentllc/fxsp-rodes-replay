@@ -506,6 +506,21 @@ public class MiscUtil {
 		return packageIds;
 	}
 
+	public static List<String> retrievePackageIdsFromUnmanifestedFile(String filename) throws IOException {
+		List<String> packageIds = new ArrayList<>();
+
+		if (filename == null) {
+			logger.error("Source filename can not be NULL - No package ids can be extracted.");
+			return packageIds;
+		}
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+		while (bufferedReader.ready()) {
+			String[] line = bufferedReader.readLine().trim().split("\\|");
+			packageIds.add(line[0]);
+		}
+		return packageIds;
+	}
+
 	public static Map<String, XMLGregorianCalendar> readPackageIdAndScanDate(String filename) throws IOException, ParseException, DatatypeConfigurationException {
 		Map<String, XMLGregorianCalendar> packageIds = new HashMap<>();
 		BufferedReader br = new BufferedReader(new FileReader(filename));

@@ -73,9 +73,11 @@ public class VerifyRun {
 		}
 		for (String packageId : results.keySet()) {
 			tally = results.get(packageId);
-			logger.info(String.format("[%s] [%s] [%d NEW] [%d VALID] [%d USED] [%d INVALID] [%d IGNORED]", packageId,
-									  tally.getAccountNbr(), tally.getNewStatus(), tally.getValidStatus(), tally.getUsedStatus(),
-									  tally.getInvalidStatus(), tally.getIgnoredStatus()));
+			if (tally.getInvalidStatus() > 0) {
+				logger.info(String.format("[%s] [%s] [%d NEW] [%d VALID] [%d USED] [%d INVALID] [%d IGNORED]", packageId,
+					tally.getAccountNbr(), tally.getNewStatus(), tally.getValidStatus(), tally.getUsedStatus(),
+					tally.getInvalidStatus(), tally.getIgnoredStatus()));
+			}
 		}
 	}
 
@@ -110,7 +112,7 @@ public class VerifyRun {
 		// You should run this application to verify that the packages were replayed.
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "/Support/ToBeReplayed-2019.07.09.rec";
+			args[0] = "/Support/test.rec";
 		}
 		VerifyRun verifyRun = new VerifyRun();
 		verifyRun.kickOffProcessing();

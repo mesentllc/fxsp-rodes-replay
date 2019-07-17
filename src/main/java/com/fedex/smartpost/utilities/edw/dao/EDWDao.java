@@ -27,6 +27,7 @@ public interface EDWDao {
 	String GET_PACKAGES_FOR_REPLAY = ClassPathResourceUtil.getString("/dao/edw/straightExtractForReplay.sql");
 	String GET_PACKAGES_FOR_REPLAY_W_OC_WEIGHT = ClassPathResourceUtil.getString("/dao/edw/selectEDWPackageWithOCWeight.sql");
 	String GET_SHIPMENTS_USING_F_PACKAGE = ClassPathResourceUtil.getString("/dao/edw/selectShipmentsUsingFPackage.sql");
+	String GET_PACKAGES_USING_SMARTPOST_PACKAGE_DTL = ClassPathResourceUtil.getString("/dao/edw/selectPackagesFromSmartpostPackageDtl.sql");
 	EDWResults retrievePackageIds(List<String> packageList, String sql);
 	EDWResults retrievePackageIdsViaUPN(List<Long> packageList, String sql, boolean createRecFile);
 	String buildFileUsingPackageIdsAndSPEEDS(List<String> packageList, boolean createFile) throws IOException;
@@ -37,6 +38,7 @@ public interface EDWDao {
 	List<Instance> retrieveReleasedPackages(List<String> packageList);
 	Set<Long> retrieveUnreleasedUPNs(Set<Long> upnSet);
 	List<String> getReleasedPackages(Set<String> packageList) throws SQLException;
+	List<String> getPackagesFromSmartPostPackageDetail(List<String> packageList) throws SQLException;
 	EDWResults retrieveOCByPackageIds(List<String> packageList);
 	EDWResults retrieveOCByUPNs(List<Long> upnList);
 	List<EDWDataRecord> retrieveEDWOCByPackageIds(List<String> packageList);

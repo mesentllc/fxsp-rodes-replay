@@ -2,7 +2,11 @@ package com.fedex.smartpost.utilities.rodes;
 
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageHistoryGateway;
+import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.Instance;
+import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -20,17 +24,25 @@ import java.util.List;
 public class VerifyReplay {
 	private static final Log logger = LogFactory.getLog(VerifyReplay.class);
 	private EDWDao edwDao;
+	private BillingPackageDao billingPackageDao;
+	private BillingPackageHistoryGateway billingPackageHistoryGateway;
 
 	private VerifyReplay() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		edwDao = (EDWDao)context.getBean("edwDao");
+		billingPackageDao = (BillingPackageDao)context.getBean("billingPackageDao");
+		billingPackageHistoryGateway = (BillingPackageHistoryGateway)context.getBean("billingPackageHistoryGateway");
 	}
 
-	private void process(List<String> filenames) throws SQLException {
+	private void process(List<String> filenames) throws SQLException, IOException {
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
-			List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
-			logInstances(edwDao.retrieveReleasedPackages(packageIds));
+			List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retrievePackageIdsFromUnmanifestedFile(filename));
+//			logInstances(edwDao.retrieveReleasedPackages(packageIds));
+			edwDao.retrieveReleasedPackages(packageIds);
+			edwDao.getPackagesFromSmartPostPackageDetail(packageIds);
+			billingPackageDao.retrieveDups(packageIds);
+			billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 		}
 		closeConnections();
 	}
@@ -54,10 +66,10 @@ public class VerifyReplay {
 		edwDao.close();
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, IOException {
 		List<String> filenames = new ArrayList<>();
 
-		filenames.add("/Support/Kienast/20190704-PkgIds.txt");
+		filenames.add("/Support/Kienast/replayUnmanifested-2019.07.17.txt");
 		VerifyReplay verifyReplay = new VerifyReplay();
 		verifyReplay.process(filenames);
 	}
