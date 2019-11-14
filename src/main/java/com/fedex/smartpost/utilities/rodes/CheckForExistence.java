@@ -2,7 +2,6 @@ package com.fedex.smartpost.utilities.rodes;
 
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.rodes.model.Message;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

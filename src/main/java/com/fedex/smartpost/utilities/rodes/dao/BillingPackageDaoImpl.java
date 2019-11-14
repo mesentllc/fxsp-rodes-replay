@@ -30,6 +30,9 @@ public class BillingPackageDaoImpl extends NamedParameterJdbcTemplate implements
     private static final String RETRIEVE_SCAN_DATES_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrievePackageScanDates.sql");
 	private static final String RETRIEVE_STATUS_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrievePackageStatus.sql");
 	private static final String PACKAGE_ID_COUNT = ClassPathResourceUtil.getString("/dao/rodes/retrievePackageIdCount.sql");
+	private static final String RETRIEVE_RELEASED_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrieveReleasedPackage.sql");
+	private static final String RETRIEVE_STAGED_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrieveStagedPackage.sql");
+
 	private DataSource dataSource;
 
 	public BillingPackageDaoImpl(DataSource dataSource) {
@@ -97,6 +100,44 @@ public class BillingPackageDaoImpl extends NamedParameterJdbcTemplate implements
 		logger.info("Total package ids found in BILLING_PACKAGE [RODeS]: " + existingPackages.size());
         return existingPackages;
     }
+
+	@Override
+	public List<String> retrieveReleased(List<String> packageList) {
+		MapSqlParameterSource parameters;
+		List<String> existingPackages = new ArrayList<>();
+		int startPos = 0;
+		int length;
+
+		logger.info("Total released package ids to check in BILLING_PACKAGE [RODeS]: " + packageList.size());
+		while (startPos < packageList.size()) {
+			length = Math.min(packageList.size() - startPos, 1000);
+			parameters = new MapSqlParameterSource();
+			parameters.addValue("pkgList", packageList.subList(startPos, startPos + length));
+			existingPackages.addAll(queryForList(RETRIEVE_RELEASED_SQL, parameters, String.class));
+			startPos += length;
+		}
+		logger.info("Total released package ids found in BILLING_PACKAGE [RODeS]: " + existingPackages.size());
+		return existingPackages;
+	}
+
+	@Override
+	public List<String> retrieveStaged(List<String> packageList) {
+		MapSqlParameterSource parameters;
+		List<String> existingPackages = new ArrayList<>();
+		int startPos = 0;
+		int length;
+
+		logger.info("Total staged package ids to check in BILLING_PACKAGE [RODeS]: " + packageList.size());
+		while (startPos < packageList.size()) {
+			length = Math.min(packageList.size() - startPos, 1000);
+			parameters = new MapSqlParameterSource();
+			parameters.addValue("pkgList", packageList.subList(startPos, startPos + length));
+			existingPackages.addAll(queryForList(RETRIEVE_STAGED_SQL, parameters, String.class));
+			startPos += length;
+		}
+		logger.info("Total staged package ids found in BILLING_PACKAGE [RODeS]: " + existingPackages.size());
+		return existingPackages;
+	}
 
 	@Override
 	public Set<Date> retrieveScanDates(List<String> packageList) {

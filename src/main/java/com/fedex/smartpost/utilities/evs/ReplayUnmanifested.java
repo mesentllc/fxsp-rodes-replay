@@ -1,8 +1,5 @@
 package com.fedex.smartpost.utilities.evs;
 
-import com.fedex.smartpost.common.business.FxspPackage;
-import com.fedex.smartpost.common.business.FxspPackageException;
-import com.fedex.smartpost.common.business.FxspPackageFactory;
 import com.fedex.smartpost.postal.types.UnmanifestedComplexType;
 import com.fedex.smartpost.postal.types.UspsPostage;
 import com.fedex.smartpost.utilities.MiscUtil;
@@ -18,18 +15,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

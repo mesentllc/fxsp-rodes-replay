@@ -1,29 +1,14 @@
 package com.fedex.smartpost.utilities.rodes;
 
 import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.edw.dao.EDWDao;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageHistoryGateway;
-import com.fedex.smartpost.utilities.rodes.dao.OutboundOrdCrtEvntStatDao;
-import com.fedex.smartpost.utilities.rodes.dao.UnmanifestedPackageDao;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
-import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.Message;
-import com.fedex.smartpost.utilities.transportation.dao.PackageDao;
-import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckRefNumInFile {
 	private static final Log logger = LogFactory.getLog(CheckRefNumInFile.class);

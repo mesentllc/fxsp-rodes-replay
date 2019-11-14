@@ -4,7 +4,6 @@ import com.fedex.smartpost.common.business.FxspPackage;
 import com.fedex.smartpost.common.business.FxspPackageFactory;
 import com.fedex.smartpost.common.types.BillingInformation;
 import com.fedex.smartpost.common.types.BillingPayorType;
-import com.fedex.smartpost.common.types.CustomerInformation;
 import com.fedex.smartpost.common.types.DeliveryEvent;
 import com.fedex.smartpost.common.types.MailClass;
 import com.fedex.smartpost.common.types.MailSubClass;
@@ -608,7 +607,7 @@ public class EDWDaoImpl implements EDWDao {
 
 	private void populateOCFields(Shipment shipment, ResultSet rs) throws SQLException {
 		// Override the SS hub id, to distinguish b/w ORIG/DEST
-		shipment.getPackage().getSortationInformation().getLocation().setHubId(rs.getInt("dest_loc_nbr"));
+		shipment.getPackage().getSortationInformation().getLocation().setHubId(rs.getInt("hub_cd"));
 		FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(shipment.getPackage().getPackageId());
 		shipment.getPackage().setMailerId(fxspPackage.getMailerId());
 		shipment.getPackage().setCustomerPackageId(rs.getString("ord_cr_blng_ref_nbr"));

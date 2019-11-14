@@ -63,4 +63,16 @@
     <bean id="transPackageHistDao" class="com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDaoImpl">
         <constructor-arg ref="transDS" />
     </bean>
+
+    <bean id="evsUnmanifestedPackageDao" class="com.fedex.smartpost.utilities.evs.dao.UnmanifestedPackageDaoImpl">
+        <constructor-arg ref="sptlDataSource" />
+    </bean>
+
+    <bean id="evsPackageDao" class="com.fedex.smartpost.utilities.evs.dao.PackageDaoImpl">
+        <constructor-arg ref="sptlDataSource" />
+    </bean>
+
+    <bean id="evsUspsEventDao" class="com.fedex.smartpost.utilities.evs.dao.UspsPackageEventDaoImpl">
+        <constructor-arg ref="sptlDataSource" />
+    </bean>
 </beans>

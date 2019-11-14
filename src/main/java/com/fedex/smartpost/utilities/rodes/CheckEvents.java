@@ -1,30 +1,21 @@
 package com.fedex.smartpost.utilities.rodes;
 
 import com.fedex.smartpost.utilities.MiscUtil;
-import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
 import com.fedex.smartpost.utilities.rodes.dao.DomesticEventStatGateway;
 import com.fedex.smartpost.utilities.rodes.dao.ReturnsEventStatGateway;
-import com.fedex.smartpost.utilities.rodes.model.BillingPackage;
 import com.fedex.smartpost.utilities.rodes.model.EventRecord;
-import com.fedex.smartpost.utilities.rodes.model.Message;
 import com.fedex.smartpost.utilities.rodes.model.StatusTally;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class CheckEvents {
 	private static final Log logger = LogFactory.getLog(CheckEvents.class);

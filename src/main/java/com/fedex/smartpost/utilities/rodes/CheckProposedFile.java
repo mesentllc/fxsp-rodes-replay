@@ -12,7 +12,6 @@ import com.fedex.smartpost.utilities.rodes.model.Instance;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import com.fedex.smartpost.utilities.transportation.dao.PackageDao;
 import com.fedex.smartpost.utilities.transportation.dao.PackageHistoryDao;
-import com.tibco.security.impl.A.B;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -61,12 +60,18 @@ public class CheckProposedFile {
 			}
 			else {
 				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
+				List<String> released = billingPackageDao.retrieveReleased(packageIds);
+				List<String> staged = billingPackageDao.retrieveStaged(packageIds);
+				packageIds.removeAll(released);
+				packageIds.removeAll(staged);
+				logger.info("Number of package ids before EDW Check: " + packageIds.size());
+				removeDuplicates(packageIds, dups);
 //				dumpUnreleased(edwDao.retrieveUnreleasedPackageIdsAndUPNs(packageIds));
 				List<Instance> instances = edwDao.retrieveReleasedPackages(packageIds);
-//				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 				packageIds = removeDups(packageIds, instances);
 				logger.info("Number of outstanding package ids: " + packageIds.size());
-//				dumpPackageIds(packageIds);
+				dumpPackageIds(packageIds);
 //				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
 //				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
@@ -78,8 +83,17 @@ public class CheckProposedFile {
 		closeConnections();
 	}
 
+	private void removeDuplicates(List<String> packageIds, List<BillingPackage> dups) {
+		List<String> duplicates = new ArrayList<>();
+		for (BillingPackage billingPackage : dups) {
+			duplicates.add(billingPackage.getFedexPkgId());
+		}
+		packageIds.removeAll(duplicates);
+	}
+
 	private void dumpPackageIds(List<String> packageIds) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/missingPackageIds.txt"));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/missingPackageIds" + sdf.format(new Date()) + ".txt"));
 		for (String packageId : packageIds) {
 			bw.write(packageId + "\n");
 		}
@@ -173,7 +187,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/missingPackageIds.txt");
+			filenames.add("/Support/2019-11-12/pkgIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);
