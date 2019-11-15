@@ -50,7 +50,7 @@ public class Package {
 	private Timestamp mailDateTmstp;
 	private String supressPstgFlag;
 	private String supressPstgRsnCd;
-	private BigDecimal mainElecFileNbr;
+	private String mainElecFileNbr;
 	private String rateSheetLabelTxt;
 	private String zipListLabelTxt;
 	private String allocateHubId;
@@ -417,11 +417,11 @@ public class Package {
 		this.supressPstgRsnCd = supressPstgRsnCd;
 	}
 
-	public BigDecimal getMainElecFileNbr() {
+	public String getMainElecFileNbr() {
 		return mainElecFileNbr;
 	}
 
-	public void setMainElecFileNbr(BigDecimal mailElecFileNbr) {
+	public void setMainElecFileNbr(String mailElecFileNbr) {
 		this.mainElecFileNbr = mailElecFileNbr;
 	}
 

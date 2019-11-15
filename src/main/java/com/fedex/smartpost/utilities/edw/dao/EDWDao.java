@@ -28,6 +28,7 @@ public interface EDWDao {
 	String GET_PACKAGES_FOR_REPLAY_W_OC_WEIGHT = ClassPathResourceUtil.getString("/dao/edw/selectEDWPackageWithOCWeight.sql");
 	String GET_SHIPMENTS_USING_F_PACKAGE = ClassPathResourceUtil.getString("/dao/edw/selectShipmentsUsingFPackage.sql");
 	String GET_PACKAGES_USING_SMARTPOST_PACKAGE_DTL = ClassPathResourceUtil.getString("/dao/edw/selectPackagesFromSmartpostPackageDtl.sql");
+	String GET_MANIFESTS = ClassPathResourceUtil.getString("/dao/edw/getManifests.sql");
 	EDWResults retrievePackageIds(List<String> packageList, String sql);
 	EDWResults retrievePackageIdsViaUPN(List<Long> packageList, String sql, boolean createRecFile);
 	String buildFileUsingPackageIdsAndSPEEDS(List<String> packageList, boolean createFile) throws IOException;
@@ -47,5 +48,6 @@ public interface EDWDao {
 	Map<String, String> retrieveSHAREInformation(Set<String> shareMap);
 	EDWResults retrieveMessagesViaSQL(String sql);
 	EDWResults retrieveMessagesForReplayWOC(List<String> packageIds);
+	Map<String, List<String>> retrieveManifests(List<String> packageIds);
 	void close() throws SQLException;
 }

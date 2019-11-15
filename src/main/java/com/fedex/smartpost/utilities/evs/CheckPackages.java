@@ -1,6 +1,7 @@
 package com.fedex.smartpost.utilities.evs;
 
 import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.evs.dao.PackageDao;
 import com.fedex.smartpost.utilities.evs.model.Package;
 import org.apache.commons.logging.Log;
@@ -8,26 +9,106 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Stream;
 
 public class CheckPackages {
 	private static final Log log = LogFactory.getLog(CheckPackages.class);
 	private PackageDao packageDao;
+	private EDWDao edwDao;
 
 	private CheckPackages() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		packageDao = (PackageDao)context.getBean("evsPackageDao");
+		edwDao = (EDWDao)context.getBean("edwDao");
 	}
 
 	private void process(String filename) {
 		List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
-		printMap(packageDao.retrievePackages(packageIds));
+		List<Package> packageList = packageDao.retrievePackages(packageIds);
+		printMap(packageList);
+		dumpEfns(getEfns(packageList));
+		checkEDW(packageIds, getEfns(packageList));
+	}
+
+	private Set<String> getEfns(List<Package> packageList) {
+		Set<String> efnSet = new TreeSet<>();
+		for (Package pkg : packageList) {
+			if (pkg.getMainElecFileNbr() != null) {
+				efnSet.add(pkg.getMainElecFileNbr());
+			}
+		}
+		return efnSet;
+	}
+
+	private void dumpEfns(Set<String> efns) {
+		String pathToWalk = "\\\\prodisinas.ground.fedex.com\\fxsp-postal1prd\\PostageManifest\\archive\\";
+		Set<String> found = new HashSet<>();
+		FileSystem fileSystem = FileSystems.getDefault();
+		Path archiveDirectory = fileSystem.getPath(pathToWalk);
+		log.info("Attempting to look for " + efns.size() + " EFNs in archive.");
+		try (Stream<Path> paths = Files.walk(archiveDirectory)) {
+			paths.map(Path::toString).filter(name -> {
+					String filename = name.substring(name.lastIndexOf(fileSystem.getSeparator()) + 1);
+					for (String mainEfn : efns) {
+						if (filename.contains("_" + mainEfn + "_")) {
+							return true;
+						}
+					}
+					return false;
+				}).forEach(filename -> {
+					String[] values = filename.split("_");
+					if (values[2].startsWith("2019")) {
+						log.info("Found EFN File: " + filename);
+						found.add(values[3]);
+					}
+				});
+		}
+		catch (IOException e) {
+			throw new RuntimeException("Unable to walk down " + pathToWalk);
+		}
+		efns.removeAll(found);
+		log.info(efns.size() + " EFNs missing from archive.");
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-11-12/missingEfn.txt"))) {
+			for (String efn : efns) {
+				bw.write(efn + "\n");
+			}
+		}
+		catch (IOException e) {
+			log.error("Unable to write efn file.", e);
+		}
+	}
+
+	private void checkEDW(List<String> packageIds, Set<String> efns) {
+		Map<String, List<String>> efnMap = edwDao.retrieveManifests(packageIds);
+		for (String efn : efnMap.keySet()) {
+			efns.remove(efn);
+		}
+		log.info(efns.size() + " EFNs missing from EDW.");
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-11-12/missingEfn.txt", true))) {
+			for (String efn : efns) {
+				bw.write(efn + "\n");
+			}
+		}
+		catch (IOException e) {
+			log.error("Unable to write efn file.", e);
+		}
 	}
 
 	private String dateToString(Date date) {

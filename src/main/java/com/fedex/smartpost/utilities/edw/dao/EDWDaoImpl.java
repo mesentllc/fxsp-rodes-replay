@@ -414,6 +414,52 @@ public class EDWDaoImpl implements EDWDao {
 	}
 
 	@Override
+	public Map<String, List<String>> retrieveManifests(List<String> packageIds) {
+		Map<String, List<String>> efnMap = new HashMap<>();
+		List<String> packageList;
+		Connection conn;
+		Statement stmt;
+		ResultSet rs;
+		int batchCount = 0;
+		int packageCount = 0;
+
+		logger.info("Number of packages to find EFNs for [EDW]: " + packageIds.size());
+		try {
+			DriverManager.registerDriver(new TeraDriver());
+			conn = dataSource.getConnection();
+			stmt = conn.createStatement();
+			stmt.execute(CREATE_VOLATILE_TABLE);
+			PreparedStatement ps = conn.prepareStatement("insert into packages (?)");
+			for (String item : packageIds) {
+				if ((++batchCount % 5000) == 0) {
+					ps.executeBatch();
+				}
+				ps.setString(1, item);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+			ps.close();
+			rs = stmt.executeQuery(GET_MANIFESTS);
+			while (rs.next()) {
+				String packageId = rs.getString("PKG_BARCD_NBR");
+				String efn = rs.getString("ELEC_FILE_NBR");
+				packageList = efnMap.computeIfAbsent(efn, k -> new ArrayList<>());
+				packageList.add(packageId);
+				packageCount++;
+			}
+			logger.debug("Found " + packageCount + " records.");
+			rs.close();
+			stmt.execute(DROP_VOLATILE_TABLE);
+			stmt.close();
+			conn.close();
+		}
+		catch (Exception e) {
+			logger.error("Setup Error: " + e.getMessage());
+		}
+		return efnMap;
+	}
+
+	@Override
 	@PreDestroy
 	public void close() throws SQLException {
 		Connection connection = DataSourceUtils.getConnection(dataSource);

@@ -67,7 +67,7 @@ public class PackageDaoImpl extends NamedParameterJdbcTemplate implements Packag
 		pkg.setMailDateTmstp(rs.getTimestamp("MAIL_DATE_TMSTP"));
 		pkg.setSupressPstgFlag(rs.getString("SUPPRESS_PSTG_FLAG"));
 		pkg.setSupressPstgRsnCd(rs.getString("SUPPRESS_PSTG_RSN_CD"));
-		pkg.setMainElecFileNbr(rs.getBigDecimal("MAIN_ELEC_FILE_NBR"));
+		pkg.setMainElecFileNbr(rs.getString("MAIN_ELEC_FILE_NBR"));
 		pkg.setRateSheetLabelTxt(rs.getString("RATE_SHEET_LABEL_TXT"));
 		pkg.setZipListLabelTxt(rs.getString("ZIP_LIST_LABEL_TXT"));
 		pkg.setAllocateHubId(rs.getString("ALLOCATE_HUB_ID"));
