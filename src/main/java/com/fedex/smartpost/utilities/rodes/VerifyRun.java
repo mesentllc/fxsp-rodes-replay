@@ -112,7 +112,7 @@ public class VerifyRun {
 		// You should run this application to verify that the packages were replayed.
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "/Support/ToBeReplayed-2019.07.30.rec";
+			args[0] = "/Support/ToBeReplayed-2020.03.17.rec";
 		}
 		VerifyRun verifyRun = new VerifyRun();
 		verifyRun.kickOffProcessing();

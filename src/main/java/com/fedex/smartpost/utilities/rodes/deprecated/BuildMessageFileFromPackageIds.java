@@ -22,7 +22,7 @@ public class BuildMessageFileFromPackageIds {
 	private void processPackageIdsUsingSPEEDS(String filename) throws IOException {
 		List<String> pkgList = MiscUtil.retreivePackageIdRecordsFromFile(filename);
 		logger.info("Package Count: " + pkgList.size());
-		logger.info("Message File Built: " + edwDao.buildFileUsingPackageIdsAndSPEEDS(pkgList, false));
+		logger.info("Message File Built: " + edwDao.buildFileUsingPackageIdsAndSPEEDS(pkgList, true));
 	}
 
 	private void processPackageIdsUsingPackageFact(String filename) throws IOException {
@@ -34,7 +34,7 @@ public class BuildMessageFileFromPackageIds {
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
 			args = new String[2];
-			args[0] = "/Support/rfs319572/rfs319572.txt";
+			args[0] = "/Support/2020-03-09/pkgIds.txt";
 		}
 		BuildMessageFileFromPackageIds buildMessageFileFromPackageIds = new BuildMessageFileFromPackageIds();
 		buildMessageFileFromPackageIds.processPackageIdsUsingPackageFact(args[0]);

@@ -68,6 +68,6 @@ public class BuildMessagesForReplay {
 
 	public static void main(String[] args) throws IOException {
 		BuildMessagesForReplay buildMessagesForReplay = new BuildMessagesForReplay();
-		buildMessagesForReplay.process("/Support/2016.10.28/replayList.txt", "/Support/2016.10.28/toBeReplayed-PF.rec");
+		buildMessagesForReplay.process("/Support/2020-03-09/pkgIds.txt", "/Support/2020-03-09/messages.rec");
 	}
 }

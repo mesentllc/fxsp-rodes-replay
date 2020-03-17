@@ -67,7 +67,7 @@ public class VerifyReplay {
 	public static void main(String[] args) throws SQLException, IOException {
 		List<String> filenames = new ArrayList<>();
 
-		filenames.add("/Support/Kienast/replayUnmanifested-2019.07.17.txt");
+		filenames.add("/Support/2020-03-09/replayUnmanifested-2020.03.13.txt");
 		VerifyReplay verifyReplay = new VerifyReplay();
 		verifyReplay.process(filenames);
 	}

@@ -95,23 +95,38 @@ public class MiscUtil {
 	}
 
 	public static void dumpPackageIds(String filename, List<String> packageIds) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
 
-		for (String packageId : packageIds) {
-			bw.write(packageId + "\n");
+			for (String packageId : packageIds) {
+				bw.write(packageId + "\n");
+			}
+			logger.info(packageIds.size() + " records written to " + filename);
 		}
-		logger.info(packageIds.size() + " records written to " + filename);
-		bw.close();
+	}
+
+	public static Set<String> retreiveEFNsFromFile(String filename) {
+		Set<String> efnSet = new HashSet<>();
+		int recordsRead = 0;
+
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			while (br.ready()) {
+				efnSet.add(br.readLine().trim());
+				recordsRead++;
+			}
+		}
+		catch (IOException ioe) {
+			logger.info("Can't open file: " + filename);
+		}
+		logger.info("Total records found in file: " + recordsRead);
+		return efnSet;
 	}
 
 	public static List<String> retreivePackageIdRecordsFromFile(String filename) {
 		Set<String> packageSet = new HashSet<>();
 		List<String> packageIds = new ArrayList<>();
-		BufferedReader br;
 		int recordsRead = 0;
 
-		try {
-			br = new BufferedReader(new FileReader(filename));
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			while (br.ready()) {
 				try {
 					FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(br.readLine().trim());
@@ -122,7 +137,6 @@ public class MiscUtil {
 				}
 				recordsRead++;
 			}
-			br.close();
 		}
 		catch (IOException ioe) {
 			logger.info("Can't open file: " + filename);

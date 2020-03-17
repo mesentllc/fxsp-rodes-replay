@@ -79,13 +79,15 @@ public class ExtractMessagesFromRecMaster {
 	public static void main(String[] args) throws IOException, ParseException {
 		if (args.length != 1) {
 			args = new String[1];
-			args[0] = "2019-05-31, 2019-06-01, 2019-06-06, 2019-06-26, 2019-06-29, " +
-			          "2019-07-03, 2019-07-05, 2019-07-10, 2019-07-11, 2019-07-12, " +
-			          "2019-07-13, 2019-07-16";
+//			args[0] = "2019-02-14, 2019-04-09, 2019-04-10, 2019-04-11, 2019-04-12, " +
+//			          "2019-04-15, 2019-04-16, 2019-04-17, 2019-04-19, 2020-01-28";
+//			args[0] = "2020-01-29, 2020-02-03, 2020-02-05, 2020-02-06, 2020-02-07, " +
+//			          "2020-02-08, 2020-02-09, 2020-02-10, 2020-02-11, 2020-02-12";
+			args[0] = "2020-02-13, 2020-02-14, 2020-02-17, 2020-02-18, 2020-02-19";
 // 			args[0] = null;
 		}
 		ExtractMessagesFromRecMaster buildMessageFileFromMaster = new ExtractMessagesFromRecMaster();
 //		buildMessageFileFromMaster.process(args[0], true);
-		buildMessageFileFromMaster.process(args[0], "/Support/missingPackageIds.rec");
+		buildMessageFileFromMaster.process(args[0], "/Support/2020-03-09-REPLAY/messages.rec");
 	}
 }

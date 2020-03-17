@@ -187,7 +187,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/2019-11-12/pkgIds.txt");
+			filenames.add("/Support/2020-03-09/pkgIds.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

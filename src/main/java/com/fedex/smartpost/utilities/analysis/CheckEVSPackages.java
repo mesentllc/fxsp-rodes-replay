@@ -1,4 +1,4 @@
-package com.fedex.smartpost.utilities.evs;
+package com.fedex.smartpost.utilities.analysis;
 
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
@@ -28,12 +28,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-public class CheckPackages {
-	private static final Log log = LogFactory.getLog(CheckPackages.class);
+public class CheckEVSPackages {
+	private static final Log log = LogFactory.getLog(CheckEVSPackages.class);
 	private PackageDao packageDao;
 	private EDWDao edwDao;
 
-	private CheckPackages() {
+	private CheckEVSPackages() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		packageDao = (PackageDao)context.getBean("evsPackageDao");
 		edwDao = (EDWDao)context.getBean("edwDao");
@@ -74,7 +74,7 @@ public class CheckPackages {
 					return false;
 				}).forEach(filename -> {
 					String[] values = filename.split("_");
-					if (values[2].startsWith("2019")) {
+					if (values[2].startsWith("2020")) {
 						log.info("Found EFN File: " + filename);
 						found.add(values[3]);
 					}
@@ -97,6 +97,7 @@ public class CheckPackages {
 
 	private void checkEDW(List<String> packageIds, Set<String> efns) {
 		Map<String, List<String>> efnMap = edwDao.retrieveManifests(packageIds);
+		dumpManifests(efnMap);
 		for (String efn : efnMap.keySet()) {
 			efns.remove(efn);
 		}
@@ -108,6 +109,19 @@ public class CheckPackages {
 		}
 		catch (IOException e) {
 			log.error("Unable to write efn file.", e);
+		}
+	}
+
+	private void dumpManifests(Map<String, List<String>> efnMap) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2020-03-16-SPEEDS/pkgId_Efn.txt", false))) {
+			for (String key : efnMap.keySet()) {
+				for (String pkgId : efnMap.get(key)) {
+					bw.write(key + "," + pkgId + "\n");
+				}
+			}
+		}
+		catch (IOException e) {
+			log.error("Unable to write manifest/pkg id file.", e);
 		}
 	}
 
@@ -127,13 +141,13 @@ public class CheckPackages {
 		for (String key : map.keySet()) {
 			log.info("Mail Date: " + key);
 			for (String subKey : map.get(key).keySet()) {
-				log.info("     " + map.get(key).get(subKey).size() + " records with a release code of " + subKey);
+				log.info("\t" + map.get(key).get(subKey).size() + " records with a release code of " + subKey);
 			}
 		}
 	}
 
 	public static void main(String[] args) {
-		CheckPackages checkPackages = new CheckPackages();
-		checkPackages.process("/Support/2019-11-12/pkgIds.txt");
+		CheckEVSPackages checkEVSPackages = new CheckEVSPackages();
+		checkEVSPackages.process("/Support/2020-03-16-SPEEDS/NotInSPEEDS.txt");
 	}
 }
