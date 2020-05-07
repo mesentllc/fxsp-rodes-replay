@@ -15,10 +15,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PackageDaoImpl extends NamedParameterJdbcTemplate implements PackageDao {
 	private static final Log log = LogFactory.getLog(PackageDao.class);
 	private static final String PACKAGES_IN_TRANS = ClassPathResourceUtil.getString("/dao/transportation/retrievePackages.sql");
+	private static final String PACKAGES_WITH_LC = ClassPathResourceUtil.getString("/dao/transportation/packagesWithLCs.sql");
 	private DataSource dataSource;
 
 	public PackageDaoImpl(DataSource dataSource) {
@@ -60,6 +63,28 @@ public class PackageDaoImpl extends NamedParameterJdbcTemplate implements Packag
 		}
 		log.info("Total package ids found in PACKAGE [TRANS]: " + existingPackages.size());
 		return existingPackages;
+	}
+
+	@Override
+	public Set<String> findPackageWithLC(Set<String> packageSet) {
+		MapSqlParameterSource parameters;
+		Set<String> packageWithLCs = new TreeSet<>();
+		List<String> packageList = new ArrayList<>(packageSet);
+		int startPos = 0;
+		int length;
+
+		log.info("Total package ids to check in PACKAGE for LC [TRANS]: " + packageList.size());
+		while (startPos < packageList.size()) {
+			length = Math.min(packageList.size() - startPos, 1000);
+			parameters = new MapSqlParameterSource();
+			parameters.addValue("pkgList", packageList.subList(startPos, startPos + length));
+			packageWithLCs.addAll(queryForList(PACKAGES_WITH_LC, parameters, String.class));
+			startPos += length;
+			log.info("Processing records " + startPos + " of " + packageList.size());
+		}
+		log.info("Processed " + packageList.size() + " records.");
+		log.info("Total package ids found in PACKAGE with LC [TRANS]: " + packageWithLCs.size());
+		return packageWithLCs;
 	}
 
 	@Override

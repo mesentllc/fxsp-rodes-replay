@@ -53,8 +53,12 @@ public class MiscUtil {
 		List<String> processedList = new ArrayList<>();
 
 		for (String packageId : packageIds) {
+			String pkg = packageId.trim();
+			if (pkg.length() > 20 && (pkg.startsWith("91") || pkg.startsWith("92"))) {
+				pkg = pkg.substring(pkg.length() - 20);
+			}
 			try {
-				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(packageId.trim());
+				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(pkg);
 				processedList.add(fxspPackage.getUspsBarcode().getPackageIdentificationCode().substring(2));
 			}
 			catch (FxspPackageException e) {
@@ -121,7 +125,7 @@ public class MiscUtil {
 		return efnSet;
 	}
 
-	public static List<String> retreivePackageIdRecordsFromFile(String filename) {
+	public static List<String> retrievePackageIdRecordsFromFile(String filename) {
 		Set<String> packageSet = new HashSet<>();
 		List<String> packageIds = new ArrayList<>();
 		int recordsRead = 0;
@@ -147,11 +151,11 @@ public class MiscUtil {
 		return packageIds;
 	}
 
-	public static Set<String> retreivePackageIdRecordsFromFiles(List<String> filenames) {
+	public static Set<String> retrievePackageIdRecordsFromFiles(List<String> filenames) {
 		Set<String> packageSet = new HashSet<>();
 		for (String filename : filenames) {
 			logger.info("Attempting to read " + filename);
-			List<String> packageIds = retreivePackageIdRecordsFromFile(filename);
+			List<String> packageIds = retrievePackageIdRecordsFromFile(filename);
 			logger.info(packageIds.size() + " records returned.");
 			long beforePackageSize = packageSet.size();
 			packageSet.addAll(packageIds);

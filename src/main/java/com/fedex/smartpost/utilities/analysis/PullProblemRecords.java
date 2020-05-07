@@ -21,7 +21,7 @@ public class PullProblemRecords {
 
 	private void process(String recFile, String pkgFile) throws ParseException, IOException {
 		List<Message> messages = MiscUtil.retreiveMessagesFromFile(recFile);
-		List<String> badPackages = MiscUtil.retreivePackageIdRecordsFromFile(pkgFile);
+		List<String> badPackages = MiscUtil.retrievePackageIdRecordsFromFile(pkgFile);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(pkgFile.substring(0,pkgFile.lastIndexOf('/')) +
 		                                                      "/extractedRecords.txt"));
 		int cntr = 0;

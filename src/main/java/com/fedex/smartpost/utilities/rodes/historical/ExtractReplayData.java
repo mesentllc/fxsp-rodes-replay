@@ -46,7 +46,7 @@ public class ExtractReplayData {
 	}
 
 	private void process(List<String> filenames, Map<Long, EDWDataRecord> edwDataRecordMap) throws Exception {
-		Set<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFiles(filenames);
+		Set<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFiles(filenames);
 		Map<String, String> sharePostalMap = buildSharePostalMap(edwDataRecordMap);
 		List<EDWDataRecord> edwDataRecords = edwDao.retrieveEDWOCByPackageIds(new ArrayList<>(packageIds));
 		List<EDWDataRecord> ssDataRecords = new ArrayList<>();

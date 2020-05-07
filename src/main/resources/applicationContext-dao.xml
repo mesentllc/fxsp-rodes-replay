@@ -52,6 +52,10 @@
         <constructor-arg ref="oracleDataSource" />
     </bean>
 
+    <bean id="eCustomerMailerIdDao" class="com.fedex.smartpost.utilities.rodes.dao.ECustomerMailerIdDaoImpl">
+        <constructor-arg ref="oracleDataSource" />
+    </bean>
+
     <bean id="edwDao" class="com.fedex.smartpost.utilities.edw.dao.EDWDaoImpl">
 		<constructor-arg ref="edwDataSource" />
 	</bean>
@@ -73,6 +77,10 @@
     </bean>
 
     <bean id="evsUspsEventDao" class="com.fedex.smartpost.utilities.evs.dao.UspsPackageEventDaoImpl">
+        <constructor-arg ref="sptlDataSource" />
+    </bean>
+
+    <bean id="postageReleaseQueueDao" class="com.fedex.smartpost.utilities.evs.dao.PostageReleaseQueueDaoImpl">
         <constructor-arg ref="sptlDataSource" />
     </bean>
 </beans>

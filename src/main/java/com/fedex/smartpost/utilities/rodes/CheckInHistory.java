@@ -30,7 +30,7 @@ public class CheckInHistory {
 	}
 
 	private void process(String inFile) {
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(inFile);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(inFile);
 		List<String> tempIds = new ArrayList<>();
 		List<BillingPackage> billingPackages = billingPackageDao.retrieveDups(packageIds);
 		log.info("Number of records found in BILLING_PACKAGE [RODeS]: " + billingPackages.size());

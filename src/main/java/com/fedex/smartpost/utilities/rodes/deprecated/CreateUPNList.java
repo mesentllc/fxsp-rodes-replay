@@ -25,7 +25,7 @@ public class CreateUPNList {
 	}
 
 	private void getCounts(String filename, boolean buildFile) {
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		BufferedWriter bw = null;
 
 		try {

@@ -83,8 +83,8 @@ public class ExtractMessagesFromRecMaster {
 //			          "2019-04-15, 2019-04-16, 2019-04-17, 2019-04-19, 2020-01-28";
 //			args[0] = "2020-01-29, 2020-02-03, 2020-02-05, 2020-02-06, 2020-02-07, " +
 //			          "2020-02-08, 2020-02-09, 2020-02-10, 2020-02-11, 2020-02-12";
-			args[0] = "2020-02-13, 2020-02-14, 2020-02-17, 2020-02-18, 2020-02-19";
-// 			args[0] = null;
+//			args[0] = "2020-02-13, 2020-02-14, 2020-02-17, 2020-02-18, 2020-02-19";
+ 			args[0] = null;
 		}
 		ExtractMessagesFromRecMaster buildMessageFileFromMaster = new ExtractMessagesFromRecMaster();
 //		buildMessageFileFromMaster.process(args[0], true);

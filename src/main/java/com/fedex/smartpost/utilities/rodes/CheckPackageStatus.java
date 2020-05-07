@@ -31,7 +31,7 @@ public class CheckPackageStatus {
 	}
 
 	private void process(String filename) {
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		Map<String, Set<String>> statusMap = billingPackageDao.retrieveStatus(packageIds);
 		for (String status : statusMap.keySet()) {
 			logger.info(status + " -> " + statusMap.get(status).size() + " package ids.");

@@ -59,8 +59,9 @@ public class CheckProposedFile {
 				new UpdateMasterReplayFile(edwDao, filename);
 			}
 			else {
-				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+				List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename));
 				List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
+/*
 				List<String> released = billingPackageDao.retrieveReleased(packageIds);
 				List<String> staged = billingPackageDao.retrieveStaged(packageIds);
 				packageIds.removeAll(released);
@@ -72,7 +73,8 @@ public class CheckProposedFile {
 				packageIds = removeDups(packageIds, instances);
 				logger.info("Number of outstanding package ids: " + packageIds.size());
 				dumpPackageIds(packageIds);
-//				dumpIds(dups);
+*/
+				dumpIds(dups);
 //				outboundOrdCrtEvntStatDao.retrievePackages(packageIds);
 //				billingPackageHistoryGateway.retrieveBillingPackageHistoryRecordsByPackageIds(packageIds);
 //				packageDao.retrievePackages(packageIds);
@@ -145,20 +147,29 @@ public class CheckProposedFile {
 
 	private void dumpIds(List<BillingPackage> billingPackages) {
 		Map<String, List<String>> statusSet = new TreeMap<>();
-		for (BillingPackage billingPackage : billingPackages) {
-			List<String> packages;
-			if (!statusSet.containsKey(billingPackage.getStatus())) {
-				packages = new ArrayList<>();
-				statusSet.put(billingPackage.getStatus(), packages);
-			}
-			else {
-				packages = statusSet.get(billingPackage.getStatus());
-			}
-			packages.add(billingPackage.getFedexPkgId());
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/staged-" + sdf.format(now) + ".txt"))) {
+			for (BillingPackage billingPackage : billingPackages) {
+				bw.write(billingPackage.getFedexPkgId() + "\n");
+				List<String> packages;
+				if (!statusSet.containsKey(billingPackage.getStatus())) {
+					packages = new ArrayList<>();
+					statusSet.put(billingPackage.getStatus(), packages);
+				}
+				else {
+					packages = statusSet.get(billingPackage.getStatus());
+				}
+				packages.add(billingPackage.getFedexPkgId());
 
-			logger.info(billingPackage.getFedexPkgId() + " -> Status: " + billingPackage.getStatus());
+				logger.info(billingPackage.getFedexPkgId() + " -> Status: " + billingPackage.getStatus());
+			}
+		}
+		catch (IOException ioe) {
+			logger.error("Unable to write to file: ", ioe);
 		}
 		for (String status : statusSet.keySet()) {
+			logger.info("Status: " + status + " has " + statusSet.size() + " package ids.");
 			writeFile(status, statusSet.get(status));
 		}
 	}
@@ -187,7 +198,7 @@ public class CheckProposedFile {
 			filenames = new ArrayList<>();
 //			filenames.add("/Support/02.2016/replay-2016-02.txt");
 //			filenames.add(MiscUtil.SS_MASTER_FILE);
-			filenames.add("/Support/2020-03-09/pkgIds.txt");
+			filenames.add("/Support/2020-04-01-UNRELEASE/ungroup.txt");
 		}
 		else {
 			filenames = Arrays.asList(args);

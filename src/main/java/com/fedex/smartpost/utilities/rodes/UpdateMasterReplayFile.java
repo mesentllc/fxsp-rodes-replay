@@ -52,7 +52,7 @@ public class UpdateMasterReplayFile {
 
 		if (StringUtils.isNotEmpty(filename)) {
 			logger.info("Reading file: " + filename);
-			List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+			List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 			logger.info(packageIds.size() + " records read from " + filename);
 			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 			MiscUtil.removeDups(packageIds, dups);

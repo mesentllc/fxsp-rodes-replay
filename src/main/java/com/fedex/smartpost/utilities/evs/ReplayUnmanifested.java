@@ -89,7 +89,7 @@ public class ReplayUnmanifested {
 //		List<String> releasedPackages = edwDao.getReleasedPackages(packageIds.keySet());
 //		logger.info(releasedPackages.size() + " records already released...");
 //		dumpToFile("/Support/2019.03.14/2019-04-02-Replay/alreadyReleased.txt", releasedPackages);
-		List<String> packageIdsFromFile = MiscUtil.retreivePackageIdRecordsFromFile("/Support/2019-03-14/2019-04-02-Replay/Status1_packages.txt");
+		List<String> packageIdsFromFile = MiscUtil.retrievePackageIdRecordsFromFile("/Support/2019-03-14/2019-04-02-Replay/Status1_packages.txt");
 //		packageIds = removeReleased(packageIds, releasedPackages);
 		packageIds = removeMissingPackageIds(packageIds, packageIdsFromFile);
 		logger.info(packageIds.size() + " records left to process...");

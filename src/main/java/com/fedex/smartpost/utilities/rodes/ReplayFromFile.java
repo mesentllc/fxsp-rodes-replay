@@ -9,10 +9,14 @@ import com.fedex.smartpost.common.types.ParcelSize;
 import com.fedex.smartpost.common.types.ProcessingCategory;
 import com.fedex.smartpost.common.types.Shipment;
 import com.fedex.smartpost.utilities.MiscUtil;
+import com.fedex.smartpost.utilities.rodes.dao.BillingPackageDao;
+import com.fedex.smartpost.utilities.rodes.dao.ECustomerMailerIdDao;
 import com.fedex.smartpost.utilities.rodes.model.EDWResults;
 import com.fedex.smartpost.utilities.rodes.model.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,14 +33,15 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.fedex.smartpost.utilities.MiscUtil.getXmlDate;
 
 public class ReplayFromFile {
 	private static final Log logger = LogFactory.getLog(ReplayFromFile.class);
-
 	private static final JAXBContext context = initContext();
+	private ECustomerMailerIdDao eCustomerMailerIdDao;
 
 	private static String SortScanBase =
 		"<Shipment><Package><PackageId>02901001082007022425</PackageId><UsPostal>"
@@ -91,7 +96,7 @@ public class ReplayFromFile {
 		shipment.getPackage().getUsPostal().setParcelSize(parcelSize);
 		shipment.getPackage().getUsPostal().setProcessingCategory(ProcessingCategory.valueOf(processingCategory));
 		if (containerId == null) {
-			shipment.getPackage().setContainerId("WP000000000000");
+			shipment.getPackage().setContainerId("WP000000000011");
 		}
 		else {
 			shipment.getPackage().setContainerId(containerId);
@@ -141,7 +146,14 @@ public class ReplayFromFile {
 		return sw.toString();
 	}
 
+	public ReplayFromFile() {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		eCustomerMailerIdDao = (ECustomerMailerIdDao)context.getBean("eCustomerMailerIdDao");
+	}
+
 	public EDWResults buildFromFile(String filename) throws Exception {
+		Map<String, String> postalCodes = new HashMap<>();
+		String newHub;
 		Shipment shipment = getStarterShipment();
 		EDWResults edwResults = new EDWResults();
 		long packageCount = 0;
@@ -151,9 +163,17 @@ public class ReplayFromFile {
 				String line = br.readLine();
 				String[] parts = line.split(",");
 				FxspPackage fxspPackage = FxspPackageFactory.createFromUnknown(parts[0]);
+				String mailerId = fxspPackage.getMailerId();
+				newHub = postalCodes.get(mailerId);
+				if (newHub == null) {
+					newHub = eCustomerMailerIdDao.retrieveHubByMID(mailerId);
+					logger.info("Adding default hub " + newHub + " for MID " + mailerId);
+					postalCodes.put(mailerId, newHub);
+				}
 				Date minDate = sdf.parse(parts[6]);
+				minDate.setTime(minDate.getTime() - 10000);
 				populateShipment(shipment, parts[0], parts[1] + parts[2], parts[4], parts[3], null, parts[5], new Timestamp(minDate.getTime()),
-					Integer.parseInt(parts[7]), BigDecimal.valueOf(Double.parseDouble(parts[8])), BigDecimal.valueOf(Double.parseDouble(parts[9])),
+					Integer.parseInt(newHub), BigDecimal.valueOf(Double.parseDouble(parts[8])), BigDecimal.valueOf(Double.parseDouble(parts[9])),
 					BigDecimal.valueOf(Double.parseDouble(parts[10])), BigDecimal.valueOf(Double.parseDouble(parts[11])), "C", "C",
 					fxspPackage.isImpb());
 				String payload = encodeObject(shipment);
@@ -184,8 +204,8 @@ public class ReplayFromFile {
 	public static void main(String[] args) throws Exception {
 		ReplayFromFile replay = new ReplayFromFile();
 		Map<Long, Message> masterMap;
-		String recFilename = "/Support/2020-03-09/messages.rec";
-		masterMap = addToMasterRecords(recFilename, replay.buildFromFile("/Support/2020-03-09/jacobsReplay.csv"));
+		String recFilename = "/Support/2020-03-09-REPLAY/messages.rec";
+		masterMap = addToMasterRecords(recFilename, replay.buildFromFile("/Support/2020-03-09-REPLAY/jacobsReplay.csv"));
 		MiscUtil.storeMasterFile(recFilename, masterMap);
 	}
 }

@@ -15,10 +15,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DomesticEventGatewayImpl extends NamedParameterJdbcTemplate implements DomesticEventGateway {
 	private static final Log logger = LogFactory.getLog(DomesticEventGateway.class);
 	private static final String RETRIEVE_DOMESTIC_EVENTS_FOR_PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/retrieveDomesticHubsForPackageId.sql");
+	private static final String LOOK_FOR_LOAD_CLOSE_FOR_PACKAGE_ID_SQL = ClassPathResourceUtil.getString("/dao/rodes/lookForLC.sql");
 	private DataSource dataSource;
 
 	public DomesticEventGatewayImpl(DataSource dataSource) {
@@ -57,5 +60,25 @@ public class DomesticEventGatewayImpl extends NamedParameterJdbcTemplate impleme
 	public void close() throws SQLException {
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		connection.close();
+	}
+
+	@Override
+	public Set<String> lookForLC(Set<String> packageIds) {
+		MapSqlParameterSource parameters;
+		Set<String> lcPkgIds = new TreeSet<>();
+		List<String> packageList = new ArrayList<>(packageIds);
+		int startPos = 0;
+		int length;
+
+		logger.info("Number of packages to check for LOAD CLOSE in DOMESTIC_PACKAGE_EVENT [RODeS]: " + packageIds.size());
+		while (startPos < packageList.size()) {
+			length = Math.min(packageIds.size() - startPos, 1000);
+			parameters = new MapSqlParameterSource();
+			parameters.addValue("packageIds", packageList.subList(startPos, startPos + length));
+			lcPkgIds.addAll(queryForList(LOOK_FOR_LOAD_CLOSE_FOR_PACKAGE_ID_SQL, parameters, String.class));
+			startPos += length;
+		}
+		logger.info(lcPkgIds.size() + " LOAD CLOSE records found.");
+		return lcPkgIds;
 	}
 }

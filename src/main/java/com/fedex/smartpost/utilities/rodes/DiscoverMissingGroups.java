@@ -16,8 +16,8 @@ public class DiscoverMissingGroups {
 
 	private void process(String rodesFile, String edwFile) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter("/missingBgs.txt"));
-		List<String> rodesBGs = MiscUtil.retreivePackageIdRecordsFromFile(rodesFile);
-		List<String> edwBGs = MiscUtil.retreivePackageIdRecordsFromFile(edwFile);
+		List<String> rodesBGs = MiscUtil.retrievePackageIdRecordsFromFile(rodesFile);
+		List<String> edwBGs = MiscUtil.retrievePackageIdRecordsFromFile(edwFile);
 		rodesBGs.removeAll(edwBGs);
 		logger.info("Total records that are missing: " + rodesBGs.size());
 		for (String record : rodesBGs) {

@@ -13,7 +13,7 @@ public class CheckMissingRecords {
 	private static final Log log = LogFactory.getLog(CheckMissingRecords.class);
 
 	private void process(String pkgIdFile, String msgFile) throws ParseException {
-		List<String> pkgIds = MiscUtil.retreivePackageIdRecordsFromFile(pkgIdFile);
+		List<String> pkgIds = MiscUtil.retrievePackageIdRecordsFromFile(pkgIdFile);
 		List<Message> messages = MiscUtil.retreiveMessagesFromFile(msgFile);
 		Set<String> msgPkgIds = MiscUtil.retreivePackageIdsFromMessages(messages);
 		for (String pkgId : pkgIds) {

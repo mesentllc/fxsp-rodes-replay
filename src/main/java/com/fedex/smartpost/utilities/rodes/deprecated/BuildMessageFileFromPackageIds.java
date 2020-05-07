@@ -20,13 +20,13 @@ public class BuildMessageFileFromPackageIds {
 	}
 
 	private void processPackageIdsUsingSPEEDS(String filename) throws IOException {
-		List<String> pkgList = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> pkgList = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		logger.info("Package Count: " + pkgList.size());
 		logger.info("Message File Built: " + edwDao.buildFileUsingPackageIdsAndSPEEDS(pkgList, true));
 	}
 
 	private void processPackageIdsUsingPackageFact(String filename) throws IOException {
-		List<String> pkgList = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> pkgList = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		logger.info("Package Count: " + pkgList.size());
 		logger.info("Message File Built: " + edwDao.buildFileUsingPackageIdsAndPackageFact(pkgList, true));
 	}

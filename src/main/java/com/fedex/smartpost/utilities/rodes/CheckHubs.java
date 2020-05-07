@@ -39,7 +39,7 @@ public class CheckHubs {
 	}
 
 	private void process(String filename) {
-		List<String> packageIds = runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+		List<String> packageIds = runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename));
 		List<BillingPackage> bps = billingPackageDao.retrieveDups(packageIds);
 		logger.info(countEmptyHubs(bps) + " billing packages with blank origin hub codes.");
 		logger.info(countEmptyFxspHubs(bps) + " billing packages with blank FXSP origin hub codes.");

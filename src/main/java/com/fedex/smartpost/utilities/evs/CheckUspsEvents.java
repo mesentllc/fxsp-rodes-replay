@@ -23,7 +23,7 @@ public class CheckUspsEvents {
 	}
 
 	private void process(String filename) {
-		List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+		List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename));
 		printMap(dao.retrieveEvents(packageIds));
 	}
 

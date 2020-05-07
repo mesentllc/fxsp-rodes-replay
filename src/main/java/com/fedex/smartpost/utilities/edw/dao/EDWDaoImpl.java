@@ -447,7 +447,7 @@ public class EDWDaoImpl implements EDWDao {
 				packageList.add(packageId);
 				packageCount++;
 			}
-			logger.debug("Found " + packageCount + " records.");
+			logger.info("Found " + packageCount + " records.");
 			rs.close();
 			stmt.execute(DROP_VOLATILE_TABLE);
 			stmt.close();

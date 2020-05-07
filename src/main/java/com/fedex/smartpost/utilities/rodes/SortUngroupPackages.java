@@ -45,7 +45,7 @@ public class SortUngroupPackages {
 
 	private void process(String filename, boolean logIt) throws IOException, ParseException {
 		logger.info("Filename: " + filename);
-		List<String> packageIds = runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+		List<String> packageIds = runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename));
 		List<BillingPackage> dups = billingPackageDao.retrieveDups(packageIds);
 		Map<Date, Set<String>> packageMap = sort(dups);
 		makeFile(packageMap);

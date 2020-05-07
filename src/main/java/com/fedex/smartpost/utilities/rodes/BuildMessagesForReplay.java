@@ -47,7 +47,7 @@ public class BuildMessagesForReplay {
 
 	private void process(String inFile, String filename) throws IOException {
 		int processed = 0;
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(inFile);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(inFile);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
 
 //		EDWResults edwResults = edwDao.retrieveMessagesForReplayWOC(packageIds);

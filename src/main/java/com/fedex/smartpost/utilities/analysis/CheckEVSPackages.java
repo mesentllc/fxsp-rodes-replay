@@ -3,13 +3,17 @@ package com.fedex.smartpost.utilities.analysis;
 import com.fedex.smartpost.utilities.MiscUtil;
 import com.fedex.smartpost.utilities.edw.dao.EDWDao;
 import com.fedex.smartpost.utilities.evs.dao.PackageDao;
+import com.fedex.smartpost.utilities.evs.dao.PostageReleaseQueueDao;
 import com.fedex.smartpost.utilities.evs.model.Package;
+import com.fedex.smartpost.utilities.rodes.dao.DomesticEventGateway;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -30,21 +34,35 @@ import java.util.stream.Stream;
 
 public class CheckEVSPackages {
 	private static final Log log = LogFactory.getLog(CheckEVSPackages.class);
+	private static final String root = "/Support/2020-05-05-BC/";
 	private PackageDao packageDao;
+	private PostageReleaseQueueDao postageReleaseQueueDao;
 	private EDWDao edwDao;
+	private com.fedex.smartpost.utilities.transportation.dao.PackageDao transPackageDao;
 
 	private CheckEVSPackages() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-dbOnly.xml");
 		packageDao = (PackageDao)context.getBean("evsPackageDao");
+		postageReleaseQueueDao = (PostageReleaseQueueDao)context.getBean("postageReleaseQueueDao");
 		edwDao = (EDWDao)context.getBean("edwDao");
+		transPackageDao = (com.fedex.smartpost.utilities.transportation.dao.PackageDao)context.getBean("transPackageDao");
 	}
 
 	private void process(String filename) {
-		List<String> packageIds = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+		Set<String> packageIds = new TreeSet<>(MiscUtil.runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename)));
+		Set<String> tmpSet = postageReleaseQueueDao.getPackageIds(packageIds);
+		dumpIds("foundInPRQ.txt", tmpSet);
+		packageIds.removeAll(tmpSet);
+		tmpSet = transPackageDao.findPackageWithLC(tmpSet);
+		dumpIds("prqIdsWithLC.txt", tmpSet);
 		List<Package> packageList = packageDao.retrievePackages(packageIds);
+		dumpIds("foundInPackage.txt", getPackageIds(packageList));
 		printMap(packageList);
 		dumpEfns(getEfns(packageList));
-		checkEDW(packageIds, getEfns(packageList));
+		checkEDW(new ArrayList<>(packageIds), getEfns(packageList));
+		packageIds.removeAll(getPackageIds(packageList));
+		log.info("Packages not found in system: " + packageIds.size());
+		dumpIds("notFound.txt", packageIds);
 	}
 
 	private Set<String> getEfns(List<Package> packageList) {
@@ -55,6 +73,16 @@ public class CheckEVSPackages {
 			}
 		}
 		return efnSet;
+	}
+
+	private Set<String> getPackageIds(List<Package> packageList) {
+		Set<String> packageIds = new TreeSet<>();
+		for (Package pkg : packageList) {
+//			if (pkg.getMainElecFileNbr() != null) {
+				packageIds.add(pkg.getPkgId());
+//			}
+		}
+		return packageIds;
 	}
 
 	private void dumpEfns(Set<String> efns) {
@@ -81,17 +109,28 @@ public class CheckEVSPackages {
 				});
 		}
 		catch (IOException e) {
-			throw new RuntimeException("Unable to walk down " + pathToWalk);
+			throw new RuntimeException("Unable to walk down " + pathToWalk, e);
 		}
 		efns.removeAll(found);
 		log.info(efns.size() + " EFNs missing from archive.");
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-11-12/missingEfn.txt"))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(root + "missingArchiveEfn.txt"))) {
 			for (String efn : efns) {
 				bw.write(efn + "\n");
 			}
 		}
 		catch (IOException e) {
 			log.error("Unable to write efn file.", e);
+		}
+	}
+
+	private void dumpIds(String filename, Set<String> packageIds) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(root + filename))) {
+			for (String pkgId : packageIds) {
+				bw.write(pkgId + "\n");
+			}
+		}
+		catch (IOException e) {
+			log.error("Unable to write file " + root + filename, e);
 		}
 	}
 
@@ -102,7 +141,7 @@ public class CheckEVSPackages {
 			efns.remove(efn);
 		}
 		log.info(efns.size() + " EFNs missing from EDW.");
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2019-11-12/missingEfn.txt", true))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(root + "missingEdwEfn.txt", true))) {
 			for (String efn : efns) {
 				bw.write(efn + "\n");
 			}
@@ -113,7 +152,7 @@ public class CheckEVSPackages {
 	}
 
 	private void dumpManifests(Map<String, List<String>> efnMap) {
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Support/2020-03-16-SPEEDS/pkgId_Efn.txt", false))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(root + "pkgId_Efn.txt", false))) {
 			for (String key : efnMap.keySet()) {
 				for (String pkgId : efnMap.get(key)) {
 					bw.write(key + "," + pkgId + "\n");
@@ -132,6 +171,7 @@ public class CheckEVSPackages {
 
 	private void printMap(List<Package> packageList) {
 		Map<String, Map<String, List<Package>>> map = new TreeMap<>();
+
 		for (Package pkg : packageList) {
 			String key = dateToString(pkg.getMailDateTmstp());
 			Map<String, List<Package>> subset = map.computeIfAbsent(key, k -> new HashMap<>());
@@ -148,6 +188,6 @@ public class CheckEVSPackages {
 
 	public static void main(String[] args) {
 		CheckEVSPackages checkEVSPackages = new CheckEVSPackages();
-		checkEVSPackages.process("/Support/2020-03-16-SPEEDS/NotInSPEEDS.txt");
+		checkEVSPackages.process(root + "pkgIds.txt");
 	}
 }

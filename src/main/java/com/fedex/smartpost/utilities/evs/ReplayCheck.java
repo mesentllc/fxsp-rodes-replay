@@ -27,7 +27,7 @@ public class ReplayCheck {
 	}
 
 	private void process(String inFile, String outFile) throws IOException, SQLException {
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(inFile);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(inFile);
 		packageIds.removeAll(extractPackageIds(billingPackageDao.retrieveDups(packageIds)));
 		logger.info(packageIds.size() + " package ids missing.");
 		MiscUtil.dumpPackageIds(outFile, packageIds);

@@ -45,7 +45,7 @@ public class ProcessOC {
 		for (String filename : filenames) {
 			logger.info("Filename: " + filename);
 //			List<Long> upnList = MiscUtil.retreiveUPNsFromFile(filename);
-			List<String> packageList = MiscUtil.runThroughBusinessCommon(MiscUtil.retreivePackageIdRecordsFromFile(filename));
+			List<String> packageList = MiscUtil.runThroughBusinessCommon(MiscUtil.retrievePackageIdRecordsFromFile(filename));
 			List<BillingPackage> dups = billingPackageDao.retrieveDups(packageList);
 			MiscUtil.removeDups(packageList, dups);
 			if (useSPEeDSTable) {

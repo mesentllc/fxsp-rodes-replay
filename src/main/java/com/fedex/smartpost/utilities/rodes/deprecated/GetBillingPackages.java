@@ -25,7 +25,7 @@ public class GetBillingPackages {
 	private void getCurrentSnapshot(String filename, boolean buildFile) {
 		// This method should be called the day that the blast to RODeS has happened, so that we capture the
 		// current state of BILLING_PACKAGE in regards to the packages that were replayed.
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		List<BillingPackage> existingPackages;
 		BufferedWriter bw = null;
 

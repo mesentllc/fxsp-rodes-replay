@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class PackageDaoImpl extends NamedParameterJdbcTemplate implements PackageDao {
 	private static final Log log = LogFactory.getLog(PackageDao.class);
@@ -77,16 +78,17 @@ public class PackageDaoImpl extends NamedParameterJdbcTemplate implements Packag
 	};
 
 	@Override
-	public List<Package> retrievePackages(List<String> packageIds) {
+	public List<Package> retrievePackages(Set<String> packageIds) {
 		List<Package> packageList = new ArrayList<>();
+		List<String> tmpList = new ArrayList<>(packageIds);
 		int startPos = 0;
 		int length;
 
 		log.info("Number of packages to check in PACKAGE [EVS]: " + packageIds.size());
-		while (startPos < packageIds.size()) {
+		while (startPos < tmpList.size()) {
 			length = Math.min(packageIds.size() - startPos, 1000);
 			MapSqlParameterSource parameters = new MapSqlParameterSource();
-			List<String> batch = packageIds.subList(startPos, startPos + length);
+			List<String> batch = tmpList.subList(startPos, startPos + length);
 			parameters.addValue("packageIds", batch);
 			packageList.addAll(query(RETRIEVE_PACKAGES, parameters, PACKAGE_RM));
 			startPos += length;

@@ -46,7 +46,7 @@ public class PreReplayProcess {
 	}
 
 	private void getCounts(String filename, boolean buildFile) {
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		List<BillingPackage> existingPackages;
 		List<EventRecord> eventRecords;
 		Set<String> unreleasedSet = new HashSet<>();

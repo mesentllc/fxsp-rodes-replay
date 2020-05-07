@@ -13,7 +13,7 @@ public class CompareFiles {
 
 	private void process(String messageFile, String filename) throws ParseException {
 		Set<String> msgPkgIds = MiscUtil.retreivePackageIdsFromMessages(MiscUtil.retreiveMessagesFromFile(messageFile));
-		List<String> packageIds = MiscUtil.retreivePackageIdRecordsFromFile(filename);
+		List<String> packageIds = MiscUtil.retrievePackageIdRecordsFromFile(filename);
 		for (String packageId : packageIds) {
 			if (msgPkgIds.contains(packageId)) {
 				log.info("Duplicate package id: " + packageId);
